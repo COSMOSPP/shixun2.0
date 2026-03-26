@@ -1,7 +1,10 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { 
+  Search,
   ChevronRight,
+  ChevronDown,
+  ChevronLeft,
   LayoutTemplate, 
   FileQuestion, 
   BookOpenCheck, 
@@ -15,6 +18,7 @@ import {
   Network, 
   MonitorPlay 
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const assistants = [
   {
@@ -117,41 +121,108 @@ const assistants = [
 
 export default function UserAIAssistant() {
   return (
-    <div className="min-h-screen bg-[#f5f6f8] p-6 lg:p-8">
-      <div className="max-w-[1400px] mx-auto">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center text-sm text-neutral-caption mb-4">
-            <span className="hover:text-primary cursor-pointer transition-colors">首页</span>
-            <ChevronRight className="w-4 h-4 mx-1" />
-            <span className="text-neutral-title font-medium">AI 助手</span>
-          </div>
+    <div className="flex flex-col h-full bg-[#f5f6f8] relative">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-neutral-title">AI 助手</h1>
-          <p className="text-sm text-neutral-caption mt-2">
-            提供多种场景的 AI 辅助工具，提升教学与学习效率
-          </p>
         </div>
+      </div>
 
-        {/* Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {assistants.map((assistant) => (
-            <Card 
-              key={assistant.id} 
-              className="group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer border-neutral-border/60 hover:border-primary/30 bg-white rounded-2xl overflow-hidden flex flex-col h-full"
-            >
-              <CardContent className="p-6 flex flex-col flex-1">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${assistant.iconBg} ${assistant.iconColor} group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
-                  <assistant.icon className="w-6 h-6" strokeWidth={2} />
+      {/* Filters */}
+      <div className="flex flex-col gap-4 mb-8">
+        <div className="flex items-start gap-4">
+          <span className="text-[14px] text-neutral-body font-medium whitespace-nowrap mt-1.5">助手类型</span>
+          <div className="flex flex-wrap gap-2">
+            {["全部", "教学辅助", "学习工具", "内容生成", "数据分析"].map((tag, i) => (
+              <button 
+                key={i}
+                className={cn(
+                  "px-4 py-1.5 rounded-full text-[13px] transition-colors",
+                  i === 0 ? "bg-[#fa541c] text-white" : "bg-white border border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c]"
+                )}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs & Search */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center bg-white rounded-full p-1 border border-neutral-border">
+          <button className="px-6 py-1.5 rounded-full text-[14px] font-medium bg-[#f5f6f8] text-neutral-title">
+            最新
+          </button>
+          <button className="px-6 py-1.5 rounded-full text-[14px] font-medium text-neutral-body hover:text-neutral-title">
+            最热
+          </button>
+        </div>
+        
+        <div className="relative w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-caption" />
+          <Input 
+            placeholder="输入助手名称搜索" 
+            className="pl-9 h-10 text-[14px] rounded-full border-neutral-border bg-white focus-visible:ring-[#fa541c]" 
+          />
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex flex-1 gap-6 min-h-0">
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 overflow-y-auto pr-2 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {assistants.map((assistant) => {
+                const Icon = assistant.icon;
+                return (
+                  <div 
+                    key={assistant.id} 
+                    className="bg-white rounded-[12px] overflow-hidden border border-neutral-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col cursor-pointer p-6"
+                  >
+                    <div className={cn("w-12 h-12 rounded-[12px] flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110", assistant.iconBg, assistant.iconColor)}>
+                      <Icon className="w-6 h-6" strokeWidth={2} />
+                    </div>
+                    <h3 className="text-[16px] font-bold text-neutral-title mb-3 group-hover:text-[#fa541c] transition-colors">
+                      {assistant.title}
+                    </h3>
+                    <p className="text-[13px] text-neutral-caption leading-relaxed flex-1">
+                      {assistant.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Load More / Pagination */}
+            <div className="mt-8 flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <button className="w-8 h-8 flex items-center justify-center rounded-[4px] border border-neutral-border text-neutral-caption hover:text-[#fa541c] hover:border-[#fa541c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button className="w-8 h-8 flex items-center justify-center rounded-[4px] bg-[#fa541c] text-white font-medium">1</button>
+                <button className="w-8 h-8 flex items-center justify-center rounded-[4px] border border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c] transition-colors">2</button>
+                <button className="w-8 h-8 flex items-center justify-center rounded-[4px] border border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c] transition-colors">3</button>
+                <span className="px-2 text-neutral-caption">...</span>
+                <button className="w-8 h-8 flex items-center justify-center rounded-[4px] border border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c] transition-colors">5</button>
+                <button className="w-8 h-8 flex items-center justify-center rounded-[4px] border border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c] transition-colors">
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              
+              <div className="flex items-center gap-4 text-[13px] text-neutral-body">
+                <div className="flex items-center gap-2">
+                  <span>每页</span>
+                  <button className="flex items-center gap-1 px-2 py-1 border border-neutral-border rounded-[4px] hover:border-[#fa541c] transition-colors">
+                    20 <ChevronDown className="w-3 h-3" />
+                  </button>
+                  <span>条</span>
                 </div>
-                <h3 className="text-[16px] font-bold text-neutral-title mb-3 group-hover:text-primary transition-colors">
-                  {assistant.title}
-                </h3>
-                <p className="text-[13px] text-neutral-caption leading-relaxed flex-1">
-                  {assistant.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+                <span>共 45 个助手</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

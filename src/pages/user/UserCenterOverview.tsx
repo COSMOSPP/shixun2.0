@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Settings, LogOut, Edit, ChevronRight, BookOpen, FolderKanban, Award, Star, Clock, Trophy, FileText, LayoutDashboard } from "lucide-react";
+import { User, Settings, LogOut, Edit, ChevronRight, BookOpen, FolderKanban, Award, Star, Clock, Trophy, FileText, LayoutDashboard, Download, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function UserCenterOverview() {
@@ -28,19 +28,15 @@ export default function UserCenterOverview() {
                 <span className="text-sm text-neutral-body">2021级</span>
               </div>
               <div className="flex items-center gap-3 mt-4">
-                <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/5" asChild>
-                  <Link to="/user/center/profile">
-                    <Edit className="w-4 h-4 mr-2" />
-                    编辑资料
-                  </Link>
+                <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/5" render={<Link to="/user/center/profile" className="flex items-center justify-center" />}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  编辑资料
                 </Button>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/user/center/profile">
-                    <Settings className="w-4 h-4 mr-2" />
-                    设置
-                  </Link>
+                <Button variant="outline" size="sm" render={<Link to="/user/center/profile" className="flex items-center justify-center" />}>
+                  <Settings className="w-4 h-4 mr-2" />
+                  设置
                 </Button>
-                <Button variant="outline" size="sm" className="text-semantic-error border-semantic-error/20 hover:bg-semantic-error/10 hover:text-semantic-error">
+                <Button variant="outline" size="sm" className="flex items-center justify-center text-semantic-error border-semantic-error/20 hover:bg-semantic-error/10 hover:text-semantic-error">
                   <LogOut className="w-4 h-4 mr-2" />
                   退出登录
                 </Button>
@@ -91,10 +87,8 @@ export default function UserCenterOverview() {
                   <div className="text-lg font-medium text-semantic-warning">3个</div>
                 </div>
               </div>
-              <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-2" asChild>
-                <Link to="/user/center/learning">
-                  查看详细统计 <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
+              <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-2" render={<Link to="/user/center/learning" className="flex items-center justify-center" />}>
+                查看详细统计 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </CardContent>
           </Card>
@@ -152,8 +146,12 @@ export default function UserCenterOverview() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">下载</Button>
-                  <Button variant="outline" size="sm">分享</Button>
+                  <Button variant="outline" size="sm" className="flex items-center justify-center">
+                    <Download className="w-4 h-4 mr-1" /> 下载
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex items-center justify-center">
+                    <Share2 className="w-4 h-4 mr-1" /> 分享
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -186,10 +184,8 @@ export default function UserCenterOverview() {
                 <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-[4px]">10%</span>
               </div>
             </div>
-            <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-4" asChild>
-              <Link to="/user/courses">
-                查看全部课程 <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
+            <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-4" render={<Link to="/user/courses" className="flex items-center justify-center" />}>
+              查看全部课程 <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </CardContent>
         </Card>
@@ -217,10 +213,8 @@ export default function UserCenterOverview() {
                 <span className="text-xs text-semantic-warning bg-semantic-warning/10 px-2 py-0.5 rounded-[4px]">规划中</span>
               </div>
             </div>
-            <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-4" asChild>
-              <Link to="/user/center/projects">
-                查看全部项目 <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
+            <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-4" render={<Link to="/user/center/projects" className="flex items-center justify-center" />}>
+              查看全部项目 <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </CardContent>
         </Card>
@@ -240,10 +234,8 @@ export default function UserCenterOverview() {
                 <div className="text-sm text-neutral-body">总使用量 1.2K</div>
               </div>
             </div>
-            <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-4" asChild>
-              <Link to="/user/center/projects">
-                管理 <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
+            <Button variant="ghost" className="w-full text-neutral-caption hover:text-primary mt-4" render={<Link to="/user/center/projects" className="flex items-center justify-center" />}>
+              管理 <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </CardContent>
         </Card>

@@ -100,10 +100,10 @@ export default function UserCenterLearning() {
             AI学习报告 <span className="text-xs font-normal text-neutral-caption bg-neutral-bg px-2 py-0.5 rounded-[4px] ml-2">自动生成</span>
           </CardTitle>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="h-8">
+            <Button variant="outline" size="sm" className="h-8 flex items-center justify-center">
               <Share2 className="w-4 h-4 mr-2" /> 分享
             </Button>
-            <Button variant="outline" size="sm" className="h-8">
+            <Button variant="outline" size="sm" className="h-8 flex items-center justify-center">
               <Download className="w-4 h-4 mr-2" /> 下载
             </Button>
           </div>
@@ -189,7 +189,7 @@ export default function UserCenterLearning() {
               </div>
               
               <div className="flex justify-end">
-                <Button variant="ghost" className="text-neutral-caption hover:text-primary">
+                <Button variant="ghost" className="text-neutral-caption hover:text-primary flex items-center justify-center">
                   查看详细分析 <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

@@ -34,7 +34,7 @@ export default function UserCenterProfile() {
                 <User className="w-10 h-10 text-neutral-caption" />
               </div>
               <div>
-                <Button variant="outline" size="sm" className="mb-2">
+                <Button variant="outline" size="sm" className="mb-2 flex items-center justify-center">
                   <Upload className="w-4 h-4 mr-2" />
                   上传头像
                 </Button>
@@ -167,7 +167,7 @@ export default function UserCenterProfile() {
                     <span className="text-sm text-neutral-title">GitHub</span>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-primary hover:text-primary-hover hover:bg-primary/5">绑定 <ChevronRight className="w-3 h-3 ml-1" /></Button>
+                <Button variant="ghost" size="sm" className="h-7 text-xs text-primary hover:text-primary-hover hover:bg-primary/5 flex items-center justify-center">绑定 <ChevronRight className="w-3 h-3 ml-1" /></Button>
               </div>
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function UserCenterProfile() {
                 </table>
               </div>
               <div className="mt-3 flex justify-end">
-                <Button variant="ghost" size="sm" className="text-neutral-caption hover:text-primary">
+                <Button variant="ghost" size="sm" className="text-neutral-caption hover:text-primary flex items-center justify-center">
                   查看全部 <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

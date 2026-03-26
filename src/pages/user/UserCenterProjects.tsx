@@ -52,7 +52,7 @@ export default function UserCenterProjects() {
               </div>
             </div>
           </div>
-          <Button size="sm" className="bg-primary hover:bg-primary-hover text-white">
+          <Button size="sm" className="bg-primary hover:bg-primary-hover text-white flex items-center justify-center">
             <Plus className="w-4 h-4 mr-2" />
             创建新项目
           </Button>
@@ -79,11 +79,11 @@ export default function UserCenterProjects() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/5">
+                <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/5 flex items-center justify-center">
                   <PlayCircle className="w-4 h-4 mr-2" /> 继续项目
                 </Button>
-                <Button variant="outline" size="sm">查看详情</Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex items-center justify-center">查看详情</Button>
+                <Button variant="outline" size="sm" className="flex items-center justify-center">
                   <Settings className="w-4 h-4 mr-2" /> 设置
                 </Button>
               </div>
@@ -111,11 +111,11 @@ export default function UserCenterProjects() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm">查看详情</Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex items-center justify-center">查看详情</Button>
+                <Button variant="outline" size="sm" className="flex items-center justify-center">
                   <GitFork className="w-4 h-4 mr-2" /> Fork
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex items-center justify-center">
                   <Share2 className="w-4 h-4 mr-2" /> 分享
                 </Button>
               </div>
@@ -131,7 +131,7 @@ export default function UserCenterProjects() {
             <Star className="w-5 h-5 text-yellow-500" />
             我的最佳实践
           </CardTitle>
-          <Button size="sm" variant="outline" className="text-primary border-primary/20 hover:bg-primary/5">
+          <Button size="sm" variant="outline" className="text-primary border-primary/20 hover:bg-primary/5 flex items-center justify-center">
             <Plus className="w-4 h-4 mr-2" />
             发布新实践
           </Button>
@@ -156,11 +156,11 @@ export default function UserCenterProjects() {
                 <span>使用：1,234次</span>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm">查看详情</Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex items-center justify-center">查看详情</Button>
+                <Button variant="outline" size="sm" className="flex items-center justify-center">
                   <Edit className="w-4 h-4 mr-2" /> 编辑
                 </Button>
-                <Button variant="outline" size="sm" className="text-semantic-error border-semantic-error/20 hover:bg-semantic-error/10 hover:text-semantic-error">
+                <Button variant="outline" size="sm" className="text-semantic-error border-semantic-error/20 hover:bg-semantic-error/10 hover:text-semantic-error flex items-center justify-center">
                   <Trash2 className="w-4 h-4 mr-2" /> 删除
                 </Button>
               </div>
@@ -184,11 +184,11 @@ export default function UserCenterProjects() {
                 <span>使用：856次</span>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm">查看详情</Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex items-center justify-center">查看详情</Button>
+                <Button variant="outline" size="sm" className="flex items-center justify-center">
                   <Edit className="w-4 h-4 mr-2" /> 编辑
                 </Button>
-                <Button variant="outline" size="sm" className="text-semantic-error border-semantic-error/20 hover:bg-semantic-error/10 hover:text-semantic-error">
+                <Button variant="outline" size="sm" className="text-semantic-error border-semantic-error/20 hover:bg-semantic-error/10 hover:text-semantic-error flex items-center justify-center">
                   <Trash2 className="w-4 h-4 mr-2" /> 删除
                 </Button>
               </div>

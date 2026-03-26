@@ -40,10 +40,10 @@ export default function UserCenterCertificates() {
                 </div>
               </div>
               <div className="flex gap-3 mt-4 pt-4 border-t border-neutral-border">
-                <Button variant="outline" size="sm" className="flex-1 text-primary border-primary/20 hover:bg-primary/5">
+                <Button variant="outline" size="sm" className="flex-1 text-primary border-primary/20 hover:bg-primary/5 flex items-center justify-center">
                   <Download className="w-4 h-4 mr-2" /> 下载
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1 flex items-center justify-center">
                   <Share2 className="w-4 h-4 mr-2" /> 分享
                 </Button>
               </div>
@@ -64,17 +64,17 @@ export default function UserCenterCertificates() {
                 </div>
               </div>
               <div className="flex gap-3 mt-4 pt-4 border-t border-neutral-border">
-                <Button variant="outline" size="sm" className="flex-1 text-primary border-primary/20 hover:bg-primary/5">
+                <Button variant="outline" size="sm" className="flex-1 text-primary border-primary/20 hover:bg-primary/5 flex items-center justify-center">
                   <Download className="w-4 h-4 mr-2" /> 下载
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1 flex items-center justify-center">
                   <Share2 className="w-4 h-4 mr-2" /> 分享
                 </Button>
               </div>
             </div>
           </div>
           <div className="flex justify-end">
-            <Button variant="ghost" size="sm" className="text-neutral-caption hover:text-primary">
+            <Button variant="ghost" size="sm" className="text-neutral-caption hover:text-primary flex items-center justify-center">
               查看全部证书 <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
@@ -111,7 +111,7 @@ export default function UserCenterCertificates() {
             <div className="text-sm text-neutral-body">
               已获得：<span className="font-bold text-primary text-lg">7</span> / 50 个徽章
             </div>
-            <Button variant="ghost" size="sm" className="text-neutral-caption hover:text-primary">
+            <Button variant="ghost" size="sm" className="text-neutral-caption hover:text-primary flex items-center justify-center">
               查看全部徽章 <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
@@ -178,10 +178,10 @@ export default function UserCenterCertificates() {
           </div>
 
           <div className="flex gap-3 border-t border-neutral-border pt-6">
-            <Button variant="outline" className="text-primary border-primary/20 hover:bg-primary/5">
+            <Button variant="outline" className="text-primary border-primary/20 hover:bg-primary/5 flex items-center justify-center">
               <Settings className="w-4 h-4 mr-2" /> 自定义徽章墙
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" className="flex items-center justify-center">
               <Share2 className="w-4 h-4 mr-2" /> 分享
             </Button>
           </div>

@@ -155,7 +155,7 @@ export default function DashboardLayout({ type }: DashboardLayoutProps) {
       {/* Main Body */}
       <div className="flex flex-1 min-h-0">
         {/* Main Content Area */}
-        <main className={cn("flex-1 overflow-auto bg-[#f5f6f8]", type === "admin" ? "" : "p-6")}>
+        <main className="flex-1 overflow-auto p-6 bg-[#f5f6f8]">
           <Outlet />
         </main>
       </div>

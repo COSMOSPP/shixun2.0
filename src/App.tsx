@@ -52,9 +52,12 @@ import SystemBilling from "./pages/admin/SystemBilling";
 import SystemResources from "./pages/admin/SystemResources";
 import SystemSecurity from "./pages/admin/SystemSecurity";
 
+import LoginUser from "./pages/LoginUser";
+import LoginTeacher from "./pages/LoginTeacher";
+
 export default function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter>
       <Routes>
         {/* Public Website */}
         <Route path="/" element={<PublicLayout />}>
@@ -65,6 +68,8 @@ export default function App() {
         
         {/* Login Page */}
         <Route path="/login" element={<Login />} />
+        <Route path="/login/user" element={<LoginUser />} />
+        <Route path="/login/teacher" element={<LoginTeacher />} />
 
         {/* User Dashboard */}
         <Route path="/user" element={<DashboardLayout type="user" />}>
