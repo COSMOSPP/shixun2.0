@@ -61,8 +61,8 @@ export default function PublicLayout() {
               </div>
               <div className="absolute top-full right-0 hidden group-hover:block pt-2">
                 <div className="w-32 rounded-[6px] border border-neutral-border bg-neutral-surface p-2 shadow-sm">
-                  <Link to="/login/user" className="block px-3 py-2 hover:bg-neutral-bg rounded-[4px] text-neutral-title transition-colors text-center">用户登录</Link>
-                  <Link to="/login/teacher" className="block px-3 py-2 hover:bg-neutral-bg rounded-[4px] text-neutral-title transition-colors text-center">教师登录</Link>
+                  <Link to="/login/user" className="block px-3 py-2 hover:bg-neutral-bg rounded-[4px] text-neutral-title transition-colors text-center">用户版</Link>
+                  <Link to="/login/teacher" className="block px-3 py-2 hover:bg-neutral-bg rounded-[4px] text-neutral-title transition-colors text-center">教师版</Link>
                 </div>
               </div>
             </div>

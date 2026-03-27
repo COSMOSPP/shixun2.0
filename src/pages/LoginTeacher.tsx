@@ -9,7 +9,7 @@ export default function LoginTeacher() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/admin"); // Redirect to admin/teacher dashboard
+    navigate("/teacher"); // Redirect to teacher dashboard
   };
 
   return (

@@ -1,0 +1,261 @@
+import React, { useState } from 'react';
+import { Plus, FolderKanban, HelpCircle, FileQuestion, FileText, Database, BookOpen, Copy, Eye, User, Calendar, Clock, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+export default function TeacherHome() {
+  const [courseTab, setCourseTab] = useState('all'); // all, active, ended
+
+  const teachingTools = [
+    { icon: FileQuestion, title: '试题管理', desc: '进入试题管理页面', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
+    { icon: FileText, title: '试卷管理', desc: '进入试卷管理页面', bgColor: 'bg-indigo-50', textColor: 'text-indigo-600' },
+    { icon: Database, title: '资源分配', desc: '进入学生资源分配页面', bgColor: 'bg-purple-50', textColor: 'text-purple-600' },
+    { icon: BookOpen, title: '我的学习', desc: '个人学习记录', bgColor: 'bg-teal-50', textColor: 'text-teal-600' },
+  ];
+
+  const courses = [
+    {
+      id: 1,
+      name: '人工智能基础与实践',
+      code: 'AI-101-2026',
+      desc: '本课程旨在介绍人工智能的基本概念、算法原理及实际应用。',
+      teacher: '张老师',
+      ta: '李助教',
+      scope: '公开',
+      status: '已上线',
+      auditStatus: '审核通过',
+      image: 'https://picsum.photos/seed/ai/400/200',
+      state: 'active'
+    },
+    {
+      id: 2,
+      name: '深度学习进阶',
+      code: 'DL-201-2026',
+      desc: '深入探讨神经网络、CNN、RNN等高级深度学习模型。',
+      teacher: '张老师',
+      ta: '王助教',
+      scope: '私有',
+      status: '未上线',
+      auditStatus: '待审核',
+      image: 'https://picsum.photos/seed/dl/400/200',
+      state: 'active'
+    },
+    {
+      id: 3,
+      name: 'Python数据分析',
+      code: 'PY-301-2025',
+      desc: '使用Python进行数据清洗、处理、分析和可视化。',
+      teacher: '张老师',
+      ta: '-',
+      scope: '公开',
+      status: '已上线',
+      auditStatus: '审核通过',
+      image: 'https://picsum.photos/seed/data/400/200',
+      state: 'ended'
+    }
+  ];
+
+  const filteredCourses = courses.filter(c => courseTab === 'all' || c.state === courseTab);
+
+  return (
+    <div className="space-y-8 pb-12 relative">
+      {/* Welcome Banner */}
+      <div className="relative bg-gradient-to-r from-[#fa541c] to-[#ff8c69] rounded-2xl p-8 md:p-10 text-white overflow-hidden shadow-lg border border-[#fa541c]/20">
+        <div className="relative z-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight">张老师，欢迎回来！</h1>
+          <p className="text-white/90 max-w-xl text-sm md:text-base leading-relaxed">
+            今天是 {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })}。您有 <span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded-md">2</span> 个待批改的作业，<span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded-md">3</span> 个进行中的课程。
+          </p>
+          <div className="mt-6 flex items-center gap-4">
+            <Button className="bg-white text-[#fa541c] hover:bg-neutral-50 rounded-full px-6 font-medium shadow-sm">
+              查看待办事项
+            </Button>
+          </div>
+        </div>
+        <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-20 bg-[url('https://picsum.photos/seed/teacher-banner/800/400')] bg-cover bg-center mix-blend-overlay"></div>
+        <div className="absolute -right-10 top-1/2 -translate-y-1/2 hidden md:block">
+          <img src="https://image.pollinations.ai/prompt/3d%20illustration%20of%20a%20teacher%20desk%20with%20books%20and%20laptop,%20clean%20background,%20vibrant%20colors?width=300&height=300&nologo=true" alt="desk" className="w-64 h-64 object-contain drop-shadow-2xl opacity-90" referrerPolicy="no-referrer" />
+        </div>
+      </div>
+
+      {/* Quick Actions & Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="md:col-span-2 bg-white rounded-2xl p-6 border border-neutral-border shadow-sm flex items-center justify-between relative overflow-hidden group cursor-pointer hover:shadow-md hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 hover:border-[#fa541c]/30">
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-[#fff2e8] text-[#fa541c] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm">
+              <Plus className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-neutral-title mb-1">新建课程</h3>
+            <p className="text-sm text-neutral-caption">开启一段新的教学旅程</p>
+          </div>
+          <div className="relative z-10">
+             <Button className="bg-[#fa541c] hover:bg-[#e84a15] text-white rounded-full px-6 shadow-sm shadow-[#fa541c]/20">立即创建</Button>
+          </div>
+          <div className="absolute right-0 bottom-0 w-40 h-40 bg-gradient-to-tl from-[#fff2e8] to-transparent rounded-tl-full opacity-50 transition-transform group-hover:scale-110"></div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 border border-neutral-border shadow-sm flex flex-col justify-between group cursor-pointer hover:shadow-md hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 hover:border-blue-200">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm">
+            <FolderKanban className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-neutral-title mb-1 group-hover:text-blue-600 transition-colors">我的项目</h3>
+            <p className="text-xs text-neutral-caption">管理数据集与模块</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 border border-neutral-border shadow-sm flex flex-col justify-between group cursor-pointer hover:shadow-md hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 hover:border-green-200">
+          <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm">
+            <HelpCircle className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-neutral-title mb-1 group-hover:text-green-600 transition-colors">帮助教程</h3>
+            <p className="text-xs text-neutral-caption">使用指南与常见问题</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Teaching Tools */}
+      <div>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-bold text-neutral-title flex items-center gap-2">
+            <div className="w-1.5 h-6 bg-[#fa541c] rounded-full"></div>
+            教学利器
+          </h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          {teachingTools.map((tool, idx) => (
+            <div key={idx} className="bg-white p-5 rounded-2xl border border-neutral-border shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group">
+              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm", tool.bgColor, tool.textColor)}>
+                <tool.icon className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-neutral-title group-hover:text-[#fa541c] transition-colors">{tool.title}</h4>
+                <p className="text-xs text-neutral-caption mt-0.5">{tool.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Course Management - Table Layout */}
+      <div className="bg-white rounded-2xl border border-neutral-border shadow-sm overflow-hidden">
+        <div className="p-5 md:p-6 border-b border-neutral-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h2 className="text-xl font-bold text-neutral-title flex items-center gap-2">
+            <div className="w-1.5 h-6 bg-[#fa541c] rounded-full"></div>
+            课程管理
+          </h2>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <input 
+                type="text" 
+                placeholder="搜索课程名称/代码" 
+                className="pl-9 pr-4 py-2 text-sm border border-neutral-border rounded-lg focus:outline-none focus:border-[#fa541c] focus:ring-1 focus:ring-[#fa541c] w-64 transition-all"
+              />
+            </div>
+            <div className="flex bg-neutral-100/80 rounded-lg p-1 border border-neutral-border/50">
+              <button 
+                className={cn("px-5 py-1.5 text-sm rounded-md transition-all duration-200", courseTab === 'all' ? "bg-white text-[#fa541c] font-bold shadow-sm" : "text-neutral-body hover:text-neutral-title")}
+                onClick={() => setCourseTab('all')}
+              >
+                全部
+              </button>
+              <button 
+                className={cn("px-5 py-1.5 text-sm rounded-md transition-all duration-200", courseTab === 'active' ? "bg-white text-[#fa541c] font-bold shadow-sm" : "text-neutral-body hover:text-neutral-title")}
+                onClick={() => setCourseTab('active')}
+              >
+                进行中
+              </button>
+              <button 
+                className={cn("px-5 py-1.5 text-sm rounded-md transition-all duration-200", courseTab === 'ended' ? "bg-white text-[#fa541c] font-bold shadow-sm" : "text-neutral-body hover:text-neutral-title")}
+                onClick={() => setCourseTab('ended')}
+              >
+                已结束
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-neutral-border/50 bg-neutral-50/50 text-sm text-neutral-caption">
+                <th className="p-5 font-medium w-[35%]">课程信息</th>
+                <th className="p-5 font-medium">授课教师</th>
+                <th className="p-5 font-medium">课程范围</th>
+                <th className="p-5 font-medium">状态</th>
+                <th className="p-5 font-medium">审核状态</th>
+                <th className="p-5 font-medium text-right">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCourses.map(course => (
+                <tr key={course.id} className="border-b border-neutral-border/30 hover:bg-[#fff2e8]/30 transition-colors group">
+                  <td className="p-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-14 rounded-md overflow-hidden flex-shrink-0 border border-neutral-border/50 shadow-sm relative">
+                        <img src={course.image} alt={course.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-neutral-title group-hover:text-[#fa541c] transition-colors cursor-pointer">{course.name}</div>
+                        <div className="text-xs text-neutral-caption font-mono mt-1">{course.code}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-5">
+                    <div className="text-sm text-neutral-title font-medium">{course.teacher}</div>
+                    <div className="text-xs text-neutral-caption mt-1">助教: {course.ta}</div>
+                  </td>
+                  <td className="p-5">
+                    <span className="px-2.5 py-1 text-xs rounded-md bg-neutral-100 text-neutral-body border border-neutral-border/50">
+                      {course.scope}
+                    </span>
+                  </td>
+                  <td className="p-5">
+                    <span className={cn("px-2.5 py-1 text-xs rounded-md font-medium", course.status === '已上线' ? "bg-green-50 text-green-600 border border-green-200" : "bg-neutral-100 text-neutral-500 border border-neutral-200")}>
+                      {course.status}
+                    </span>
+                  </td>
+                  <td className="p-5">
+                    <span className={cn("text-sm font-medium flex items-center gap-1.5", course.auditStatus === '审核通过' ? "text-green-600" : "text-orange-500")}>
+                      <span className={cn("w-1.5 h-1.5 rounded-full", course.auditStatus === '审核通过' ? "bg-green-600" : "bg-orange-500")}></span>
+                      {course.auditStatus}
+                    </span>
+                  </td>
+                  <td className="p-5 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm" className="h-8 text-xs text-neutral-body hover:text-[#fa541c] hover:bg-[#fff2e8] rounded-full">
+                        <Copy className="w-3.5 h-3.5 mr-1" /> 复制
+                      </Button>
+                      <Button size="sm" className="h-8 text-xs bg-[#fa541c] hover:bg-[#e84a15] text-white shadow-sm shadow-[#fa541c]/20 rounded-full px-4">
+                        <Eye className="w-3.5 h-3.5 mr-1" /> 查看
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {filteredCourses.length === 0 && (
+            <div className="p-12 text-center text-neutral-caption">
+              暂无符合条件的课程
+            </div>
+          )}
+        </div>
+        
+        {/* Pagination */}
+        <div className="flex items-center justify-between p-5 border-t border-neutral-border/50 bg-neutral-50/30">
+          <span className="text-sm text-neutral-caption">共 <span className="font-medium text-neutral-title">{filteredCourses.length}</span> 条数据</span>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-md bg-white" disabled>&lt;</Button>
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-md bg-[#fa541c] text-white border-[#fa541c] shadow-sm">1</Button>
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-md bg-white hover:bg-neutral-50">2</Button>
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-md bg-white hover:bg-neutral-50">&gt;</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

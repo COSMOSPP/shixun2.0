@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Home from "./pages/Home";
@@ -55,9 +55,15 @@ import SystemSecurity from "./pages/admin/SystemSecurity";
 import LoginUser from "./pages/LoginUser";
 import LoginTeacher from "./pages/LoginTeacher";
 
+import TeacherLayout from "./layouts/TeacherLayout";
+import TeacherHome from "./pages/teacher/TeacherHome";
+import TeacherQuestions from "./pages/teacher/TeacherQuestions";
+import TeacherPapers from "./pages/teacher/TeacherPapers";
+import TeacherResources from "./pages/teacher/TeacherResources";
+
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         {/* Public Website */}
         <Route path="/" element={<PublicLayout />}>
@@ -70,6 +76,14 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/login/user" element={<LoginUser />} />
         <Route path="/login/teacher" element={<LoginTeacher />} />
+
+        {/* Teacher Dashboard */}
+        <Route path="/teacher" element={<TeacherLayout />}>
+          <Route index element={<TeacherHome />} />
+          <Route path="questions" element={<TeacherQuestions />} />
+          <Route path="papers" element={<TeacherPapers />} />
+          <Route path="resources" element={<TeacherResources />} />
+        </Route>
 
         {/* User Dashboard */}
         <Route path="/user" element={<DashboardLayout type="user" />}>
@@ -146,6 +160,6 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
