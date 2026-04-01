@@ -4,7 +4,7 @@ import {
   Search, ChevronRight, ChevronDown, ChevronLeft, Play, Plus, ArrowLeft, ArrowRight, 
   Terminal, Code, Settings, Rocket, BookOpen, Clock, User, FileCode, CheckCircle2, 
   Bot, Send, Paperclip, LayoutDashboard, Database, Activity, Cpu, PlayCircle, FileText,
-  History, Calendar, Info, Layers, Zap, Star, Sparkles
+  History, Calendar, Info, Layers, Zap, Star, Sparkles, GitFork, Download, Tag, Heart, X, Copy, Users, Box, MessageSquare, ImageIcon, Edit3, Languages, Code2, LayoutGrid, Mic, LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,8 @@ export default function UserPractices() {
   const navigate = useNavigate();
   const [view, setView] = useState<'list' | 'detail'>('list');
   const [selectedPractice, setSelectedPractice] = useState<any>(null);
+  const [selectedSkill, setSelectedSkill] = useState<any>(null);
+  const [showChat, setShowChat] = useState<boolean>(false);
 
   const [selectedTech, setSelectedTech] = useState("全部");
   const [selectedScenario, setSelectedScenario] = useState("全部");
@@ -301,10 +303,22 @@ export default function UserPractices() {
             <ArrowLeft className="w-5 h-5" /> 返回列表
           </button>
           <div className="flex items-center gap-3">
-             <button className="px-4 py-2 rounded-lg text-neutral-body font-medium hover:bg-neutral-bg transition-colors flex items-center gap-2 text-[14px]">
-               <FileText className="w-4 h-4" /> 查看文档
-             </button>
-             <button className="bg-gradient-to-r from-[#fa541c] to-[#ff7a45] text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+             <div className="flex items-center gap-2 bg-white border border-neutral-border shadow-sm rounded-lg px-3 py-1.5 cursor-pointer hover:bg-neutral-bg transition-colors">
+               <GitFork className="w-4 h-4 text-neutral-caption" />
+               <span className="text-[13px] font-medium text-neutral-title">Fork</span>
+             </div>
+             <div className="flex items-center gap-2 bg-white border border-neutral-border shadow-sm rounded-lg px-3 py-1.5 cursor-pointer hover:bg-neutral-bg transition-colors">
+               <Download className="w-4 h-4 text-neutral-caption" />
+               <span className="text-[13px] font-medium text-neutral-title">下载</span>
+             </div>
+             <div className="flex items-center gap-2 bg-neutral-bg border border-neutral-border rounded-lg px-3 py-1.5">
+               <Tag className="w-3.5 h-3.5 text-neutral-caption" />
+               <span className="text-[13px] font-medium text-neutral-caption">{selectedPractice.version}</span>
+             </div>
+             <button 
+               onClick={() => setShowChat(true)}
+               className="bg-gradient-to-r from-[#fa541c] to-[#ff7a45] text-white px-6 py-2 ml-1 rounded-lg font-bold shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+             >
               <Rocket className="w-4 h-4" /> 使用此最佳实践
             </button>
           </div>
@@ -384,7 +398,7 @@ export default function UserPractices() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedPractice.skills.map((skill: string, idx: number) => (
-                    <div key={idx} className="border border-neutral-border rounded-xl p-4 flex items-center justify-between hover:border-[#fa541c] hover:shadow-md transition-all cursor-pointer group">
+                    <div key={idx} onClick={() => setSelectedSkill(skill)} className="border border-neutral-border rounded-xl p-4 flex items-center justify-between hover:border-[#fa541c] hover:shadow-md transition-all cursor-pointer group bg-white">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
                           <Bot className="w-5 h-5" />
@@ -458,6 +472,115 @@ export default function UserPractices() {
             </div>
           </div>
         </div>
+
+        {/* Skill Detail Modal */}
+        {selectedSkill && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedSkill(null)}></div>
+            <div className="relative bg-[#f8f9fa] w-full max-w-[700px] max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl flex flex-col font-sans">
+              
+              {/* Header */}
+              <div className="bg-white p-6 border-b border-neutral-200 flex items-start justify-between shrink-0">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                    <span className="text-white text-xl font-bold">D</span>
+                  </div>
+                  <div>
+                    <h2 className="text-[20px] font-bold text-neutral-900 leading-tight pr-4">
+                      description: 将用户讲稿一键生成乔布斯风极简科技...
+                    </h2>
+                    <div className="text-[13px] text-neutral-500 font-mono mt-1">ppt-generator</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button className="w-10 h-10 bg-white border border-neutral-200 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 hover:text-red-500 transition-colors">
+                    <Heart className="w-5 h-5" />
+                  </button>
+                  <button onClick={() => setSelectedSkill(null)} className="w-10 h-10 bg-white border border-neutral-200 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="px-2.5 py-1 bg-green-50 text-green-600 border border-green-200/60 rounded flex items-center gap-1.5 text-[12px] font-medium">
+                    <Box className="w-3.5 h-3.5" /> v1.0.0
+                  </span>
+                  <span className="px-2.5 py-1 bg-orange-50 text-orange-500 border border-orange-200/60 rounded flex items-center gap-1.5 text-[12px] font-medium">
+                    <Zap className="w-3.5 h-3.5" /> 加速下载可用
+                  </span>
+                </div>
+                
+                <p className="text-[15px] text-neutral-700 leading-relaxed font-medium mb-3">
+                  将用户讲稿一键生成乔布斯风极简科技感竖屏HTML演示稿。 当用户需要生成PPT、演示文稿、Slides、幻灯片，或要求科技风/极简风/乔布斯风格的演示时触发此技能。输出为单个可直接运行的HTML文件。
+                </p>
+                <div className="text-[13px] text-neutral-500 mb-6">
+                  该技能数据来源于ClawHub，作者是 wwlyzzyorg，详情可查看 <a href="#" className="font-medium text-blue-500 hover:underline">ClawHub ↗</a>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                  <div className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm border border-neutral-100">
+                    <Download className="w-5 h-5 text-blue-500 mb-2" />
+                    <div className="text-[22px] font-bold text-neutral-900">1.5 万</div>
+                    <div className="text-[12px] text-neutral-400 font-medium">下载量</div>
+                  </div>
+                  <div className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm border border-neutral-100">
+                    <Star className="w-5 h-5 text-orange-400 mb-2" />
+                    <div className="text-[22px] font-bold text-neutral-900">35</div>
+                    <div className="text-[12px] text-neutral-400 font-medium">收藏</div>
+                  </div>
+                  <div className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm border border-neutral-100">
+                    <Users className="w-5 h-5 text-emerald-500 mb-2" />
+                    <div className="text-[22px] font-bold text-neutral-900">977</div>
+                    <div className="text-[12px] text-neutral-400 font-medium">安装量</div>
+                  </div>
+                </div>
+
+                {/* Installation */}
+                <div>
+                  <h3 className="text-[16px] font-bold text-neutral-900 mb-4">安装方式</h3>
+                  
+                  <div className="flex bg-neutral-200/70 p-1 rounded-xl mb-6">
+                    <button className="flex-1 py-2 bg-white rounded-lg shadow-sm text-center font-bold text-[14px] text-neutral-900 flex items-center justify-center gap-2">
+                      <Bot className="w-4 h-4" /> 我是 Agent
+                    </button>
+                    <button className="flex-1 py-2 text-center font-medium text-neutral-500 text-[14px] flex items-center justify-center gap-2 hover:text-neutral-700 transition-colors">
+                      <User className="w-4 h-4" /> 我是 Human
+                    </button>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <div className="text-[13px] text-neutral-500 mb-2">将此提示发送给你的Agent，以安装SkillHub CLI</div>
+                      <div className="bg-neutral-100 border border-neutral-200 rounded-xl p-5 text-[14px] text-neutral-700 leading-relaxed font-medium relative group">
+                        <button className="absolute top-3 right-3 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center gap-1.5 transition-colors opacity-0 group-hover:opacity-100 shadow-sm cursor-pointer z-10">
+                          <Copy className="w-3.5 h-3.5" /> 复制
+                        </button>
+                        请先检查是否已安装 SkillHub 商店，若未安装，请根据 https://skillhub-1388575217.cos.ap-guangzhou.myqcloud.com/install/skillhub.md 安装 SkillHub商店，但是只安装CLI，然后安装ppt-generator技能。<br/><br/>
+                        若已安装，则直接安装ppt-generator技能。
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-[13px] text-neutral-500 mb-2">将此提示发送给你的Agent，以安装SkillHub CLI，并且优先采用 SkillHub 加速安装技能</div>
+                      <div className="bg-neutral-100 border border-neutral-200 rounded-xl p-5 text-[14px] text-neutral-700 leading-relaxed font-medium relative group">
+                        <button className="absolute top-3 right-3 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center gap-1.5 transition-colors opacity-0 group-hover:opacity-100 shadow-sm cursor-pointer z-10">
+                          <Copy className="w-3.5 h-3.5" /> 复制
+                        </button>
+                        请先检查是否已安装 SkillHub 商店，若未安装，请根据 https://skillhub-1388575217.cos.ap-guangzhou.myqcloud.com/install/skillhub.md 安装 SkillHub商店，但是只安装CLI，然后使用加速节点安装ppt-generator技能。<br/><br/>
+                        若已安装，则直接使用加速节点安装ppt-generator技能。
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -628,10 +751,145 @@ export default function UserPractices() {
     </div>
   );
 
+  // --- 4. CHAT VIEW (Full screen overlay) ---
+  const renderChatView = () => {
+    const historyItems = [
+      "根据主页描述设计理念",
+      "解释图片内容",
+      "设计十年简历",
+      "写获奖感言"
+    ];
+
+    const suggestionPills = [
+      "写一份亮眼的季度工作总结",
+      "鸡蛋颜色越深越有营养吗？",
+      "分享一些冬季主题的小手工创意",
+      "生成独一无二的新年贺图",
+      "生成国风桌面壁纸",
+      "为什么许多经典动画人物都戴着手套？",
+      "为什么一首歌的高潮部分叫做副歌？",
+      "深色和浅色蔬菜营养有区别吗？",
+      "有哪些特别下饭的情景喜剧？"
+    ];
+
+    return (
+      <div className="fixed inset-0 z-[200] bg-white flex h-screen w-screen font-sans overflow-hidden">
+        {/* Left Sidebar */}
+        <div className="w-[260px] bg-[#f9f9f9] border-r border-neutral-200 flex flex-col shrink-0">
+          <div className="h-16 flex items-center px-5 gap-2 text-[#fa541c] font-bold text-[18px]">
+            <Layers className="w-5 h-5" /> 翼实训平台
+          </div>
+          <div className="px-5 py-3 text-[12px] text-neutral-400 font-medium">历史对话</div>
+          <div className="flex-1 overflow-y-auto px-3 space-y-0.5 custom-scrollbar">
+            {historyItems.map((item, i) => (
+              <div key={i} className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-neutral-200/50 cursor-pointer text-[13.5px] text-neutral-600 transition-colors">
+                <MessageSquare className="w-4 h-4 text-neutral-400 shrink-0" />
+                <span className="truncate">{item}</span>
+              </div>
+            ))}
+          </div>
+          <div className="p-4 border-t border-neutral-200 flex items-center justify-between text-neutral-500">
+            <button className="flex items-center gap-2 text-[13px] hover:text-neutral-800 transition-colors">
+              <Info className="w-4 h-4" /> 关于翼实训
+            </button>
+            <button className="p-1.5 hover:bg-neutral-200 rounded-md transition-colors">
+              <Download className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Right Main Area */}
+        <div className="flex-1 flex flex-col bg-white min-w-0">
+          {/* Header */}
+          <div className="h-14 border-b border-neutral-100 flex items-center justify-center relative shrink-0">
+            <button 
+              onClick={() => setShowChat(false)}
+              className="absolute left-4 p-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors flex items-center justify-center"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex flex-col items-center">
+              <span className="font-bold text-[15px] text-neutral-800">{selectedPractice?.title || '最佳实践体验'}</span>
+              <span className="text-[11px] text-neutral-400">内容由AI生成</span>
+            </div>
+          </div>
+
+          {/* Chat Body */}
+          <div className="flex-1 overflow-y-auto flex flex-col relative custom-scrollbar">
+            {/* Center Content */}
+            <div className="flex-1 flex flex-col items-center justify-center p-8 max-w-[800px] mx-auto w-full mt-[-8vh]">
+              <h2 className="text-[32px] font-medium text-neutral-900 mb-10 tracking-wide">下午好！有新的工作安排吗？</h2>
+              <div className="flex flex-wrap justify-center gap-3 w-full">
+                {suggestionPills.map((pill, i) => (
+                  <button 
+                    key={i} 
+                    className="bg-neutral-50 border border-neutral-100 hover:border-orange-200 hover:bg-orange-50 hover:text-[#fa541c] text-neutral-600 px-5 py-2.5 rounded-full text-[14px] transition-all whitespace-nowrap"
+                  >
+                    {pill}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Input Container */}
+            <div className="w-full max-w-[850px] mx-auto p-4 pb-8 shrink-0 relative bg-white">
+              <div className="border border-blue-100 hover:border-blue-300 focus-within:border-blue-400 focus-within:shadow-[0_4px_20px_-4px_rgba(59,130,246,0.1)] rounded-[24px] bg-white transition-all flex flex-col overflow-hidden">
+                <textarea 
+                  className="w-full resize-none outline-none min-h-[70px] px-5 pt-4 text-[15px] text-neutral-800 placeholder:text-neutral-400 bg-transparent"
+                  placeholder="发消息或输入'/'选择技能"
+                />
+                
+                {/* Tools Bar */}
+                <div className="px-4 pb-3 pt-1 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar no-scrollbar text-neutral-500">
+                    <button className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors group">
+                      <Paperclip className="w-[18px] h-[18px] group-hover:text-neutral-800" />
+                    </button>
+                    <div className="w-[1px] h-4 bg-neutral-200 mx-1 shrink-0"></div>
+                    
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <Zap className="w-4 h-4 group-hover:text-orange-500" /> 快速
+                    </button>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <ImageIcon className="w-4 h-4 group-hover:text-blue-500" /> 图像生成
+                    </button>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <Edit3 className="w-4 h-4 group-hover:text-emerald-500" /> 帮我写作
+                    </button>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <Languages className="w-4 h-4 group-hover:text-purple-500" /> 翻译
+                    </button>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <Code2 className="w-4 h-4 group-hover:text-rose-500" /> 编程
+                    </button>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <Search className="w-4 h-4 group-hover:text-indigo-500" /> 深入研究
+                    </button>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 hover:bg-neutral-100 rounded-lg transition-colors text-[13px] font-medium whitespace-nowrap group">
+                      <LayoutGrid className="w-4 h-4 group-hover:text-neutral-800" /> 更多
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 pl-2 shrink-0">
+                    <button className="p-2 bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-800 rounded-full transition-colors flex items-center justify-center">
+                      <Mic className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full relative overflow-hidden">
       {view === 'list' && renderListView()}
       {view === 'detail' && renderDetailView()}
+      {showChat && renderChatView()}
     </div>
   );
 }

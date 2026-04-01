@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -14,8 +14,14 @@ import {
   Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ExamDetail from "@/components/ExamDetail";
+import ExamSession from "@/components/ExamSession";
+import ExamResult from "@/components/ExamResult";
 
 export default function UserExams() {
+  const [selectedExam, setSelectedExam] = useState<any>(null);
+  const [isTakingExam, setIsTakingExam] = useState(false);
+  const [isViewingResult, setIsViewingResult] = useState(false);
   const exams = [
     {
       title: "2026年春季网络安全基础认证考试",
@@ -91,6 +97,18 @@ export default function UserExams() {
     }
   ];
 
+  if (isViewingResult && selectedExam) {
+    return <ExamResult exam={selectedExam} onBack={() => { setIsViewingResult(false); setSelectedExam(null); }} />;
+  }
+
+  if (isTakingExam && selectedExam) {
+    return <ExamSession exam={selectedExam} onBack={() => setIsTakingExam(false)} onSubmit={() => { setIsTakingExam(false); setIsViewingResult(true); }} />;
+  }
+
+  if (selectedExam) {
+    return <ExamDetail exam={selectedExam} onBack={() => setSelectedExam(null)} onStart={() => setIsTakingExam(true)} onViewResult={() => setIsViewingResult(true)} />;
+  }
+
   return (
     <div className="flex flex-col h-full bg-[#f5f6f8] relative">
       {/* Header */}
@@ -102,6 +120,22 @@ export default function UserExams() {
 
       {/* Filters */}
       <div className="flex flex-col gap-4 mb-8">
+        <div className="flex items-start gap-4">
+          <span className="text-[14px] text-neutral-body font-medium whitespace-nowrap mt-1.5">考试标签</span>
+          <div className="flex flex-wrap gap-2">
+            {["全部", "随堂测验", "阶段考试", "认证考试"].map((tag, i) => (
+              <button 
+                key={i}
+                className={cn(
+                  "px-4 py-1.5 rounded-full text-[13px] transition-colors",
+                  i === 0 ? "bg-[#fa541c] text-white" : "bg-white border border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c]"
+                )}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex items-start gap-4">
           <span className="text-[14px] text-neutral-body font-medium whitespace-nowrap mt-1.5">考试状态</span>
           <div className="flex flex-wrap gap-2">
@@ -149,7 +183,7 @@ export default function UserExams() {
               {exams.map((exam, i) => {
                 const Icon = exam.icon;
                 return (
-                  <div key={i} className="bg-white rounded-[12px] border border-neutral-border shadow-sm hover:shadow-md transition-all p-5 flex items-center gap-6 group cursor-pointer">
+                  <div key={i} onClick={() => setSelectedExam(exam)} className="bg-white rounded-[12px] border border-neutral-border shadow-sm hover:shadow-md transition-all p-5 flex items-center gap-6 group cursor-pointer">
                     <div className={cn("w-14 h-14 rounded-[12px] flex items-center justify-center flex-shrink-0", exam.color)}>
                       <Icon className="w-7 h-7" />
                     </div>

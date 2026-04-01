@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -9,11 +9,37 @@ import {
   Users,
   Star,
   Monitor,
-  Tag
+  Tag,
+  Plus,
+  Github,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ProjectIDE from "@/components/ProjectIDE";
+import ProjectDetail from "@/components/ProjectDetail";
 
 export default function UserProjects() {
+  const [isEditingProject, setIsEditingProject] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [showGithubInput, setShowGithubInput] = useState(false);
+  const [githubUrl, setGithubUrl] = useState("");
+  const [currentBanner, setCurrentBanner] = useState(0);
+
+  const banners = [
+    { title: "2026 AI 创新挑战赛", desc: "丰厚奖金池，等你来战！", color: "from-blue-600 to-indigo-800" },
+    { title: "大模型前沿探索营", desc: "掌握最新 LLM 核心技术", color: "from-[#fa541c] to-[#d4380d]" },
+    { title: "计算机视觉实战课", desc: "从入门到精通 CV", color: "from-emerald-600 to-teal-800" }
+  ];
+
+  useEffect(() => {
+    if (isEditingProject) return;
+    const interval = setInterval(() => {
+       setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isEditingProject]);
+
   const projects = [
     {
       title: "图像分类项目",
@@ -97,13 +123,62 @@ export default function UserProjects() {
     }
   ];
 
+  if (isEditingProject) {
+    return <ProjectIDE onBack={() => setIsEditingProject(false)} />;
+  }
+
+  if (selectedProject) {
+    return (
+      <ProjectDetail 
+        project={selectedProject} 
+        onBack={() => setSelectedProject(null)} 
+        onStart={() => {
+          setSelectedProject(null);
+          setIsEditingProject(true);
+        }} 
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-[#f5f6f8] relative">
+      {/* Banner Carousel */}
+      <div className="w-full h-40 mb-8 rounded-[12px] overflow-hidden relative group shrink-0 shadow-sm">
+        {banners.map((banner, i) => (
+          <div 
+            key={i} 
+            className={cn(
+              "absolute inset-0 transition-opacity duration-1000 bg-gradient-to-r flex flex-col justify-center px-12",
+              banner.color,
+              currentBanner === i ? "opacity-100 z-10" : "opacity-0 z-0"
+            )}
+          >
+            <h2 className="text-[28px] font-bold text-white mb-2">{banner.title}</h2>
+            <p className="text-white/80 text-[15px]">{banner.desc}</p>
+          </div>
+        ))}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {banners.map((_, i) => (
+             <div 
+               key={i} 
+               onClick={() => setCurrentBanner(i)}
+               className={cn("w-2 h-2 rounded-full cursor-pointer transition-all", currentBanner === i ? "w-6 bg-white" : "bg-white/50")}
+             ></div>
+          ))}
+        </div>
+      </div>
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-neutral-title">全部项目</h1>
         </div>
+        <Button 
+          className="bg-[#fa541c] hover:bg-[#d4380d] text-white flex items-center gap-2 shadow-sm h-10 px-6 rounded-full"
+          onClick={() => { setShowNewProjectModal(true); setShowGithubInput(false); setGithubUrl(""); }}
+        >
+          <Plus className="w-4 h-4" /> 新建项目
+        </Button>
       </div>
 
       {/* Filters */}
@@ -155,6 +230,7 @@ export default function UserProjects() {
               {projects.map((project, i) => (
                 <div 
                   key={i} 
+                  onClick={() => setSelectedProject(project)}
                   className="bg-white rounded-[12px] overflow-hidden border border-neutral-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col cursor-pointer"
                 >
                   {/* Cover Image */}
@@ -232,6 +308,64 @@ export default function UserProjects() {
           </div>
         </div>
       </div>
+      {showNewProjectModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+           <div className="w-[480px] bg-white rounded-[16px] shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
+             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-border bg-[#fafafa]">
+                <h3 className="text-[16px] font-bold text-neutral-title flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-[#fa541c]" /> 创建新项目
+                </h3>
+                <button onClick={() => setShowNewProjectModal(false)} className="text-neutral-caption hover:text-neutral-title transition-colors">
+                  <X className="w-5 h-5"/>
+                </button>
+             </div>
+             <div className="p-6">
+                <p className="text-[14px] text-neutral-body mb-6 leading-relaxed">
+                  您可以选择从头开始建立一个全新的空项目环境，或者引入您在 GitHub 上已有的项目代码库。
+                </p>
+                
+                {showGithubInput && (
+                   <div className="mb-6 animate-in slide-in-from-top-2">
+                     <label className="text-[13px] font-bold text-neutral-title block mb-2">源仓库地址 <span className="text-red-500">*</span></label>
+                     <Input 
+                       autoFocus
+                       value={githubUrl}
+                       onChange={e => setGithubUrl(e.target.value)}
+                       placeholder="例如: https://github.com/username/repository" 
+                       className="w-full text-sm h-11 border-neutral-border focus-visible:ring-[#fa541c] shadow-sm rounded-lg" 
+                     />
+                   </div>
+                )}
+
+                <div className="flex gap-4 pt-2">
+                   <Button 
+                     variant="outline" 
+                     className={cn("flex-1 h-11 flex items-center gap-2 border-neutral-300 text-neutral-title hover:bg-neutral-50 rounded-lg transition-all", showGithubInput ? "border-[#fa541c] text-[#fa541c] bg-[#fa541c]/5 hover:bg-[#fa541c]/10" : "")}
+                     onClick={() => {
+                        if (showGithubInput && githubUrl) {
+                           setIsEditingProject(true);
+                           setShowNewProjectModal(false);
+                        } else {
+                           setShowGithubInput(true);
+                        }
+                     }}
+                   >
+                     <Github className="w-4 h-4" /> {showGithubInput ? "确认导入" : "引入 GitHub 项目"}
+                   </Button>
+                   <Button 
+                     className="flex-1 h-11 flex items-center gap-2 bg-[#fa541c] hover:bg-[#d4380d] text-white shadow-md rounded-lg transition-all"
+                     onClick={() => {
+                        setIsEditingProject(true);
+                        setShowNewProjectModal(false);
+                     }}
+                   >
+                     新建空项目
+                   </Button>
+                </div>
+             </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 }

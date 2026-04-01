@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -13,11 +13,16 @@ import {
   HardDrive,
   Clock,
   Download,
-  MoreVertical
+  MoreVertical,
+  Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import DatasetDetail from "@/components/DatasetDetail";
+import DatasetUpload from "@/components/DatasetUpload";
 
 export default function UserDatasets() {
+  const [selectedDataset, setSelectedDataset] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const datasets = [
     {
       title: "电商用户行为分析数据",
@@ -81,13 +86,32 @@ export default function UserDatasets() {
     }
   ];
 
+  if (isUploading) {
+    return <DatasetUpload onBack={() => setIsUploading(false)} onSubmit={(data) => { setIsUploading(false); console.log("Dataset submtited: ", data); }} />;
+  }
+
+  if (selectedDataset) {
+    return <DatasetDetail dataset={selectedDataset} onBack={() => setSelectedDataset(null)} />;
+  }
+
   return (
     <div className="flex flex-col h-full bg-[#f5f6f8] relative">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold text-neutral-title">数据集</h1>
-        </div>
+      {/* Banner */}
+      <div className="w-full h-40 mb-8 rounded-[16px] overflow-hidden relative group shrink-0 shadow-sm bg-gradient-to-r from-[#fa541c] to-[#ff8c3a] flex items-center px-10 justify-between">
+         <div className="text-white relative z-10">
+            <h1 className="text-2xl font-bold mb-2">公共数据集广场</h1>
+            <p className="text-[14px] text-white/80 max-w-2xl mb-4">这里汇聚了用户上传的公开数据集，您可以将数据集添加到项目中进行处理、微调与分析。</p>
+            <div className="flex gap-4">
+              <Button variant="outline" className="h-9 px-4 rounded-[6px] text-white border-white/30 bg-white/10 hover:bg-white hover:text-[#fa541c]">
+                了解更多
+              </Button>
+            </div>
+         </div>
+         <Button onClick={() => setIsUploading(true)} className="bg-white hover:bg-[#fff2e8] text-[#fa541c] font-bold h-11 px-6 rounded-full shadow-lg relative z-10">
+            <Plus className="w-5 h-5 mr-2" /> 新建数据集
+         </Button>
+         
+         <Database className="absolute right-32 -bottom-10 w-48 h-48 text-white/10 transform rotate-12" />
       </div>
 
       {/* Filters */}
@@ -139,7 +163,7 @@ export default function UserDatasets() {
               {datasets.map((dataset, i) => {
                 const Icon = dataset.icon;
                 return (
-                  <div key={i} className="bg-white rounded-[12px] overflow-hidden border border-neutral-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col p-5 cursor-pointer">
+                  <div key={i} onClick={() => setSelectedDataset(dataset)} className="bg-white rounded-[12px] overflow-hidden border border-neutral-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col p-5 cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className={cn("w-12 h-12 rounded-[12px] flex items-center justify-center flex-shrink-0", dataset.color)}>
@@ -179,7 +203,7 @@ export default function UserDatasets() {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                      <Button className="flex-1 h-9 text-[13px] rounded-[6px] bg-[#fa541c] hover:bg-[#ff7a45] text-white">
+                      <Button onClick={(e) => { e.stopPropagation(); setSelectedDataset(dataset); }} className="flex-1 h-9 text-[13px] rounded-[6px] bg-[#fa541c] hover:bg-[#ff7a45] text-white">
                         查看详情
                       </Button>
                       <Button variant="outline" className="w-9 h-9 p-0 rounded-[6px] border-neutral-border text-neutral-body hover:text-[#fa541c] hover:border-[#fa541c]">
