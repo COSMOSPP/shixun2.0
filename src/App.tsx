@@ -9,8 +9,9 @@ import UserExperiments from "./pages/UserExperiments";
 import UserExams from "./pages/UserExams";
 import UserDatasets from "./pages/UserDatasets";
 import UserAIAssistant from "./pages/UserAIAssistant";
+import UserAIAssistantStudio from "./pages/UserAIAssistantStudio";
 import UserAIAgents from "./pages/UserAIAgents";
-import UserAISkills from "./pages/UserAISkills";
+import UserAIAgentsStudio from "./pages/UserAIAgentsStudio";
 import UserProjects from "./pages/UserProjects";
 import UserPractices from "./pages/UserPractices";
 import SkillBuilder from "./pages/SkillBuilder";
@@ -21,7 +22,6 @@ import UserCenterOverview from "./pages/user/UserCenterOverview";
 import UserCenterProfile from "./pages/user/UserCenterProfile";
 import UserCenterLearning from "./pages/user/UserCenterLearning";
 import UserCenterProjects from "./pages/user/UserCenterProjects";
-import UserCenterCertificates from "./pages/user/UserCenterCertificates";
 import AdminAILayout from "./layouts/AdminAILayout";
 import AdminAICourses from "./pages/admin/AdminAICourses";
 import AdminAIExperiments from "./pages/admin/AdminAIExperiments";
@@ -98,14 +98,14 @@ export default function App() {
             <Route path="profile" element={<UserCenterProfile />} />
             <Route path="learning" element={<UserCenterLearning />} />
             <Route path="projects" element={<UserCenterProjects />} />
-            <Route path="certificates" element={<UserCenterCertificates />} />
           </Route>
           <Route path="projects" element={<UserProjects />} />
           <Route path="practices" element={<UserPractices />} />
           <Route path="datasets" element={<UserDatasets />} />
           <Route path="ai/assistant" element={<UserAIAssistant />} />
+          <Route path="ai/assistant/studio" element={<UserAIAssistantStudio />} />
           <Route path="ai/agents" element={<UserAIAgents />} />
-          <Route path="ai/skills" element={<UserAISkills />} />
+          <Route path="ai/agents/studio" element={<UserAIAgentsStudio />} />
           <Route path="courses" element={<UserDashboard />} />
           <Route path="experiments" element={<UserExperiments />} />
           <Route path="exams" element={<UserExams />} />

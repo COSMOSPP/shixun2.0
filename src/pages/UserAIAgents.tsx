@@ -1,9 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Bot, Cpu, Code, Shield, Database, Cloud, Play, Settings, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function UserAIAgents() {
+  const navigate = useNavigate();
+
   const agents = [
     { id: 1, name: "代码审查专家", desc: "自动检查代码规范、安全漏洞和性能问题", icon: Code, color: "text-blue-500", bg: "bg-blue-50", status: "运行中", calls: 1250 },
     { id: 2, name: "架构设计助手", desc: "根据业务需求生成云原生架构图和部署方案", icon: Cloud, color: "text-purple-500", bg: "bg-purple-50", status: "空闲", calls: 840 },
@@ -20,7 +23,10 @@ export default function UserAIAgents() {
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-neutral-title">数字员工</h1>
         </div>
-        <button className="bg-[#fa541c] hover:bg-[#fa541c]/90 text-white px-5 py-2 rounded-[8px] text-[14px] font-medium transition-colors flex items-center gap-2">
+        <button 
+          onClick={() => navigate('/user/ai/agents/studio')}
+          className="bg-[#fa541c] hover:bg-[#fa541c]/90 text-white px-5 py-2 rounded-[8px] text-[14px] font-medium transition-colors flex items-center gap-2"
+        >
           <Plus className="w-4 h-4" />
           创建数字员工
         </button>
@@ -107,7 +113,10 @@ export default function UserAIAgents() {
                         <button className="w-8 h-8 flex items-center justify-center rounded-[8px] text-neutral-caption hover:text-[#fa541c] hover:bg-[#fa541c]/10 transition-colors">
                           <Settings className="w-4 h-4" />
                         </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-[8px] text-neutral-caption hover:text-[#fa541c] hover:bg-[#fa541c]/10 transition-colors">
+                        <button 
+                          onClick={() => navigate('/user/ai/agents/studio')}
+                          className="w-8 h-8 flex items-center justify-center rounded-[8px] text-neutral-caption hover:text-[#fa541c] hover:bg-[#fa541c]/10 transition-colors"
+                        >
                           <Play className="w-4 h-4" />
                         </button>
                       </div>

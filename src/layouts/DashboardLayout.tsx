@@ -65,7 +65,6 @@ export default function DashboardLayout({ type }: DashboardLayoutProps) {
       children: [
         { title: "AI助手", href: "/user/ai/assistant" },
         { title: "数字员工", href: "/user/ai/agents" },
-        { title: "技能仓库", href: "/user/ai/skills" },
       ]
     },
   ];
@@ -84,7 +83,7 @@ export default function DashboardLayout({ type }: DashboardLayoutProps) {
   const items = type === "user" ? userItems : adminItems;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f6f8]">
+    <div className="h-screen w-screen overflow-hidden flex flex-col bg-[#f5f6f8]">
       {/* Dark Header */}
       <header className="h-14 bg-[#1f1f1f] text-white flex items-center justify-between px-4 flex-shrink-0 z-50">
         <div className="flex items-center gap-6 h-full">
@@ -179,7 +178,10 @@ export default function DashboardLayout({ type }: DashboardLayoutProps) {
       {/* Main Body */}
       <div className="flex flex-1 min-h-0">
         {/* Main Content Area */}
-        <main className={cn("flex-1 overflow-auto bg-[#f5f6f8]", location.pathname === "/user" ? "p-0" : "p-6")}>
+        <main className={cn(
+          "flex flex-col min-h-0",
+          (location.pathname === "/user" || location.pathname.startsWith("/user/center") || location.pathname === "/user/ai/assistant/studio" || location.pathname === "/user/ai/agents/studio") ? "flex-1 p-0 bg-[#f5f6f8] overflow-hidden" : "flex-1 p-6 bg-[#f5f6f8] overflow-auto"
+        )}>
           <Outlet />
         </main>
       </div>

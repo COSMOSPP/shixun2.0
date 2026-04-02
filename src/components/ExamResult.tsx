@@ -13,74 +13,139 @@ export default function ExamResult({ exam, onBack }: ExamResultProps) {
 
   return (
     <div className="flex flex-col h-full bg-[#f5f6f8] relative w-[100vw] left-1/2 -translate-x-1/2 -mt-6">
-      <div className="bg-[#1e1e2d] pt-8 pb-16 px-14 shadow-md relative overflow-hidden shrink-0">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-gradient-to-br from-[#fa541c]/20 to-transparent rounded-full blur-3xl rounded-tl"></div>
+      <div className="bg-gradient-to-r from-[#ea5b22] to-[#fd8d44] pt-8 pb-36 px-14 shadow-sm relative overflow-hidden shrink-0">
+        {/* Background Decorative Patterns */}
+        <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+        
+        {/* Left Ruler Graphic */}
+        <div className="absolute left-[-5%] top-[10%] opacity-[0.15] pointer-events-none transform -rotate-[15deg]">
+            <svg width="500" height="200" viewBox="0 0 500 200" fill="none">
+               <path d="M0,100 L500,100" stroke="white" strokeWidth="3" />
+               {Array.from({length: 26}).map((_, i) => (
+                  <path key={`ruler-tick-${i}`} d={`M${i * 20},100 L${i * 20}, ${i % 5 === 0 ? 60 : 80}`} stroke="white" strokeWidth="2.5" />
+               ))}
+               {Array.from({length: 6}).map((_, i) => (
+                  <text key={`ruler-num-${i}`} x={i * 100} y="40" fill="white" fontSize="24" fontFamily="monospace" fontWeight="bold" textAnchor="middle">{i + 7}</text>
+               ))}
+            </svg>
+        </div>
+
+        {/* Right Protractor Graphic */}
+        <div className="absolute right-[5%] bottom-[-15%] opacity-[0.15] pointer-events-none transform rotate-[20deg]">
+            <svg width="300" height="300" viewBox="0 0 300 300" fill="none">
+               <path d="M50,150 A100,100 0 0,1 250,150 Z" stroke="white" strokeWidth="4" fill="transparent" />
+               <path d="M70,150 A80,80 0 0,1 230,150" stroke="white" strokeWidth="2" fill="transparent" strokeDasharray="6 6" />
+               <path d="M140,150 A10,10 0 0,1 160,150 Z" stroke="white" strokeWidth="3" fill="transparent" />
+               <path d="M150,150 L150,50" stroke="white" strokeWidth="2" />
+               <path d="M150,150 L79.3,79.3" stroke="white" strokeWidth="2" />
+               <path d="M150,150 L220.7,79.3" stroke="white" strokeWidth="2" />
+               {Array.from({length: 19}).map((_, i) => {
+                  const angle = (i * 10) * (Math.PI / 180);
+                  const x1 = 150 - 100 * Math.cos(angle);
+                  const y1 = 150 - 100 * Math.sin(angle);
+                  const x2 = 150 - 90 * Math.cos(angle);
+                  const y2 = 150 - 90 * Math.sin(angle);
+                  return <path key={`prot-tick-${i}`} d={`M${x1},${y1} L${x2},${y2}`} stroke="white" strokeWidth={i % 9 === 0 ? "4" : "2"} />
+               })}
+            </svg>
+        </div>
+
+        {/* Right Paper Plane Graphic */}
+        <div className="absolute right-[15%] top-[15%] opacity-20 pointer-events-none animate-[bounce_6s_ease-in-out_infinite]">
+           <svg width="80" height="80" viewBox="0 0 24 24" fill="white">
+               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+           </svg>
+           <svg width="60" height="30" viewBox="0 0 60 30" fill="none" className="absolute top-[80%] right-[80%] stroke-white stroke-2 opacity-50" style={{strokeDasharray: '4 4'}}>
+               <path d="M60,0 C40,15 20,30 0,30" />
+           </svg>
+        </div>
+
+        {/* Dynamic Abstract Waves */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0">
+          <svg className="relative block w-[calc(100%+1.3px)] h-[80px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#f5f6f8"></path>
+          </svg>
+        </div>
+
         <div className="max-w-6xl mx-auto flex items-start gap-8 relative z-10">
            <div className="flex-1">
-             <div className="flex items-center text-[13px] text-neutral-400 mb-6 font-medium">
-                <button onClick={onBack} className="hover:text-white flex items-center gap-1 transition-colors">
+             <div className="flex items-center text-[13px] text-white/90 mb-6 font-medium">
+                <button onClick={onBack} className="hover:text-white flex items-center gap-1 transition-colors bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
                   <ChevronLeft className="w-4 h-4" /> 返回我的考试
                 </button>
              </div>
-             <h1 className="text-3xl font-bold text-white mb-2">{exam.title} - 成绩报告</h1>
-             <p className="text-neutral-400 text-[14px] mb-8">报告基于 AI 双盲评卷模型与自动化判分系统生成，客观公正。</p>
              
-             <div className="flex flex-wrap gap-12 text-white">
-                <div className="flex flex-col gap-1">
-                  <div className="text-[13px] text-neutral-400 flex items-center gap-1.5"><Target className="w-4 h-4" /> 最终得分</div>
-                  <div className="text-[36px] font-bold text-[#fa541c] leading-none">95<span className="text-[18px] text-neutral-400 ml-1">/ 100</span></div>
-                  <div className="text-[12px] text-green-400 mt-1 bg-green-500/10 px-2 py-0.5 rounded inline-block w-fit">已达及格线 (60分)</div>
-                </div>
-                <div className="w-px h-16 bg-white/10"></div>
-                
-                <div className="flex flex-col gap-1">
-                  <div className="text-[13px] text-neutral-400 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> 综合正确率</div>
-                  <div className="text-[28px] font-bold text-white leading-tight">92.5%</div>
-                </div>
-                
-                <div className="flex flex-col gap-1">
-                  <div className="text-[13px] text-neutral-400 flex items-center gap-1.5"><Award className="w-4 h-4" /> 击败参考人数</div>
-                  <div className="text-[28px] font-bold text-white leading-tight">88%</div>
-                  <div className="text-[12px] text-neutral-400 mt-1">班级排行: 5 / 42</div>
-                </div>
-                
-                <div className="flex flex-col gap-1">
-                  <div className="text-[13px] text-neutral-400 flex items-center gap-1.5"><Clock className="w-4 h-4" /> 用时统计</div>
-                  <div className="text-[28px] font-bold text-white leading-tight">45:12</div>
-                  <div className="text-[12px] text-neutral-400 mt-1">总允许时长: 120 分钟</div>
-                </div>
-             </div>
+             <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">{exam.title} - 成绩报告</h1>
+             <p className="text-white/90 text-[15px] mb-4 flex items-center gap-2 font-medium">
+               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+               报告基于 AI 双盲评卷模型与自动化判分系统生成，客观公正。
+             </p>
            </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto w-full -mt-8 relative z-20 pb-12 flex gap-6">
-         {/* Sidebar Tabs */}
-         <div className="w-64 bg-white rounded-[12px] shadow-sm flex flex-col p-2 shrink-0 h-fit">
-            {[
-              { id: 'overview', label: '能力总览与错题', icon: BarChart2 },
-              { id: 'detail', label: '客观题对错对比', icon: Hash },
-              { id: 'practical', label: 'AI 主观与实操判卷', icon: Zap },
-            ].map(tab => (
-              <button 
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-[8px] text-[14px] font-bold transition-colors text-left",
-                  activeTab === tab.id ? "bg-[#fff2e8] text-[#fa541c]" : "text-neutral-body hover:bg-neutral-50 hover:text-neutral-title"
-                )}
-              >
-                <tab.icon className="w-4 h-4" /> {tab.label}
-              </button>
-            ))}
-         </div>
+      <div className="max-w-6xl mx-auto w-full -mt-24 relative z-20 pb-12">
+        <div className="bg-white rounded-[24px] shadow-lg p-8 flex flex-col gap-8">
+           
+           {/* Top Stats Cards mapping to image structure */}
+           <div className="grid grid-cols-4 gap-6">
+              <div className="bg-[#fff7ed] rounded-[16px] p-6 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute right-[-10px] bottom-[-10px] opacity-[0.05]"><Target className="w-32 h-32 text-[#fa541c]" /></div>
+                <div className="text-[14px] text-neutral-body flex items-center gap-1.5 font-bold mb-2"><Target className="w-4 h-4 text-[#fa541c]" /> 最终得分</div>
+                <div className="text-[40px] font-black text-[#fa541c] leading-none tracking-tight">95<span className="text-[18px] text-[#fa541c]/60 ml-1 font-bold">/ 100</span></div>
+                <div className="text-[12px] text-[#fa541c] mt-2 bg-[#fa541c]/10 px-2.5 py-0.5 rounded-md font-bold inline-block w-fit">已达及格线 (60分)</div>
+              </div>
+              
+              <div className="bg-[#f5f8ff] rounded-[16px] p-6 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute right-[-10px] bottom-[-10px] opacity-[0.05]"><CheckCircle2 className="w-32 h-32 text-blue-600" /></div>
+                <div className="text-[14px] text-neutral-body flex items-center gap-1.5 font-bold mb-2"><CheckCircle2 className="w-4 h-4 text-blue-600" /> 综合正确率</div>
+                <div className="text-[34px] font-bold text-neutral-title leading-tight">92.5%</div>
+              </div>
+              
+              <div className="bg-[#f5f8ff] rounded-[16px] p-6 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute right-[-10px] bottom-[-10px] opacity-[0.05]"><Award className="w-32 h-32 text-indigo-600" /></div>
+                <div className="text-[14px] text-neutral-body flex items-center gap-1.5 font-bold mb-2"><Award className="w-4 h-4 text-indigo-600" /> 击败参考人数</div>
+                <div className="text-[34px] font-bold text-neutral-title leading-tight">88%</div>
+                <div className="text-[13px] text-neutral-body mt-2 font-medium">班级排行: 5 / 42</div>
+              </div>
 
-         {/* Content Area */}
-         <div className="flex-1 flex flex-col gap-6">
+              <div className="bg-[#f5f8ff] rounded-[16px] p-6 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute right-[-10px] bottom-[-10px] opacity-[0.05]"><Clock className="w-32 h-32 text-purple-600" /></div>
+                <div className="text-[14px] text-neutral-body flex items-center gap-1.5 font-bold mb-2"><Clock className="w-4 h-4 text-purple-600" /> 用时统计</div>
+                <div className="text-[34px] font-bold text-neutral-title leading-tight">45:12</div>
+                <div className="text-[13px] text-neutral-body mt-2 font-medium">总时长: 120 分钟</div>
+              </div>
+           </div>
+
+           {/* Horizontal Tabs mapping to image structure */}
+           <div className="flex border-b border-neutral-100 gap-8 px-2">
+             {[
+              { id: 'overview', label: '能力总览与错题' },
+              { id: 'detail', label: '客观题对错对比' },
+              { id: 'practical', label: 'AI 主观与实操' },
+             ].map(tab => (
+               <button
+                 key={tab.id}
+                 onClick={() => setActiveTab(tab.id)}
+                 className={cn(
+                   "pb-4 text-[15px] font-bold transition-all relative",
+                   activeTab === tab.id ? "text-[#fa541c]" : "text-neutral-body hover:text-neutral-title"
+                 )}
+               >
+                 {tab.label}
+                 {activeTab === tab.id && (
+                   <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#fa541c] rounded-t-full"></div>
+                 )}
+               </button>
+             ))}
+           </div>
+
+           {/* Content Box */}
+           <div className="flex flex-col gap-6 -mt-2">
             {activeTab === 'overview' && (
               <>
                 {/* Score Breakdown Radar / Progress */}
-                <div className="bg-white rounded-[12px] border border-neutral-border shadow-sm p-8">
+                <div className="bg-[#fafafa] rounded-[16px] border border-neutral-100 p-8">
                   <h3 className="font-bold text-[16px] text-neutral-title flex items-center gap-2 mb-6">
                      <BarChart2 className="w-5 h-5 text-[#fa541c]" /> 各题型表现雷达图
                   </h3>
@@ -115,7 +180,7 @@ export default function ExamResult({ exam, onBack }: ExamResultProps) {
                 </div>
 
                 {/* Wrong Questions Recap */}
-                <div className="bg-white rounded-[12px] border border-neutral-border shadow-sm p-8">
+                <div className="bg-[#fafafa] rounded-[16px] border border-neutral-100 p-8">
                   <h3 className="font-bold text-[16px] text-neutral-title flex items-center gap-2 mb-6">
                      <AlertTriangle className="w-5 h-5 text-[#fa541c]" /> 错题与薄弱点汇总
                   </h3>
@@ -139,7 +204,7 @@ export default function ExamResult({ exam, onBack }: ExamResultProps) {
             )}
 
             {activeTab === 'detail' && (
-              <div className="bg-white rounded-[12px] border border-neutral-border shadow-sm p-8">
+              <div className="bg-[#fafafa] rounded-[16px] border border-neutral-100 p-8">
                 <h3 className="font-bold text-[16px] text-neutral-title flex items-center gap-2 mb-6">
                    <Hash className="w-5 h-5 text-[#fa541c]" /> 单题答案全景对比 (AI 自动判分)
                 </h3>
@@ -178,7 +243,7 @@ export default function ExamResult({ exam, onBack }: ExamResultProps) {
             )}
 
             {activeTab === 'practical' && (
-              <div className="bg-white rounded-[12px] border border-neutral-border shadow-sm p-8">
+              <div className="bg-[#fafafa] rounded-[16px] border border-neutral-100 p-8">
                 <h3 className="font-bold text-[16px] text-neutral-title flex items-center gap-2 mb-6">
                    <Zap className="w-5 h-5 text-[#fa541c]" /> AI 主观与实操综合评判链
                 </h3>
@@ -233,7 +298,8 @@ export default function ExamResult({ exam, onBack }: ExamResultProps) {
               </div>
             )}
          </div>
-      </div>
-    </div>
+       </div>
+     </div>
+   </div>
   );
 }

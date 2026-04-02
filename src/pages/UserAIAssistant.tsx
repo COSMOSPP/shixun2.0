@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { 
   Search,
@@ -120,6 +121,7 @@ const assistants = [
 ];
 
 export default function UserAIAssistant() {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col h-full bg-[#f5f6f8] relative">
       {/* Header */}
@@ -127,6 +129,12 @@ export default function UserAIAssistant() {
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-neutral-title">AI 助手</h1>
         </div>
+        <button 
+          onClick={() => navigate('/user/ai/assistant/studio')}
+          className="flex items-center gap-2 px-6 py-2 bg-[#fa541c] text-white rounded-full text-[14px] font-bold hover:bg-[#e64a19] transition-colors shadow-sm"
+        >
+          <span className="text-[16px] leading-none mb-[2px]">+</span> 创建新助手
+        </button>
       </div>
 
       {/* Filters */}

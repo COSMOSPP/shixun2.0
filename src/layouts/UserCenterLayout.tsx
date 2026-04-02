@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { User, BookOpen, FolderKanban, Award, LayoutDashboard } from "lucide-react";
+import { User, BookOpen, FolderKanban, LayoutDashboard } from "lucide-react";
 
 export default function UserCenterLayout() {
   const location = useLocation();
@@ -11,11 +11,10 @@ export default function UserCenterLayout() {
     { title: "个人资料", icon: User, href: "/user/center/profile" },
     { title: "学习数据", icon: BookOpen, href: "/user/center/learning" },
     { title: "我的项目", icon: FolderKanban, href: "/user/center/projects" },
-    { title: "证书徽章", icon: Award, href: "/user/center/certificates" },
   ];
 
   return (
-    <div className="flex bg-white rounded-[16px] border border-neutral-border overflow-hidden min-h-[calc(100vh-8rem)] shadow-sm">
+    <div className="flex h-full w-full bg-white overflow-hidden shadow-sm">
       {/* Left Sidebar */}
       <div className="w-[200px] border-r border-neutral-border flex-shrink-0 flex flex-col bg-white">
         <div className="p-5 border-b border-neutral-border">
