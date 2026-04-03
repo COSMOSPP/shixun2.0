@@ -141,7 +141,7 @@ export default function UserProjects() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#f5f6f8] relative">
+    <div className="flex flex-col bg-[#f5f6f8] relative">
       {/* Banner Carousel */}
       <div className="w-full h-40 mb-8 rounded-[12px] overflow-hidden relative group shrink-0 shadow-sm">
         {banners.map((banner, i) => (
@@ -222,10 +222,7 @@ export default function UserProjects() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 gap-6 min-h-0">
-        {/* Project Grid */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <div className="flex-1 pr-2 pb-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {projects.map((project, i) => (
                 <div 
@@ -305,9 +302,7 @@ export default function UserProjects() {
                 <span>共 234 个项目</span>
               </div>
             </div>
-          </div>
         </div>
-      </div>
       {showNewProjectModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
            <div className="w-[480px] bg-white rounded-[16px] shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">

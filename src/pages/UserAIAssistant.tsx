@@ -123,7 +123,7 @@ const assistants = [
 export default function UserAIAssistant() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col h-full bg-[#f5f6f8] relative">
+    <div className="flex flex-col bg-[#f5f6f8] relative">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
@@ -177,10 +177,7 @@ export default function UserAIAssistant() {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex flex-1 gap-6 min-h-0">
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <div className="flex-1 pr-2 pb-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {assistants.map((assistant) => {
                 const Icon = assistant.icon;
@@ -230,9 +227,7 @@ export default function UserAIAssistant() {
                 <span>共 45 个助手</span>
               </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
   );
 }

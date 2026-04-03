@@ -110,7 +110,7 @@ export default function UserExams() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#f5f6f8] relative">
+    <div className="flex flex-col bg-[#f5f6f8] relative">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
@@ -175,10 +175,7 @@ export default function UserExams() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 gap-6 min-h-0">
-        {/* Exams List */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <div className="flex-1 pr-2 pb-4">
             <div className="space-y-4">
               {exams.map((exam, i) => {
                 const Icon = exam.icon;
@@ -287,9 +284,7 @@ export default function UserExams() {
                 <span>共 75 个考试</span>
               </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
   );
 }

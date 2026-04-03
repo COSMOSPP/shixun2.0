@@ -95,7 +95,7 @@ export default function UserDatasets() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#f5f6f8] relative">
+    <div className="flex flex-col bg-[#f5f6f8] relative">
       {/* Banner */}
       <div className="w-full h-40 mb-8 rounded-[16px] overflow-hidden relative group shrink-0 shadow-sm bg-gradient-to-r from-[#fa541c] to-[#ff8c3a] flex items-center px-10 justify-between">
          <div className="text-white relative z-10">
@@ -155,10 +155,7 @@ export default function UserDatasets() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 gap-6 min-h-0">
-        {/* Datasets Grid */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <div className="flex-1 pr-2 pb-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {datasets.map((dataset, i) => {
                 const Icon = dataset.icon;
@@ -242,9 +239,7 @@ export default function UserDatasets() {
                 <span>共 235 个数据集</span>
               </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
   );
 }

@@ -111,7 +111,7 @@ export default function UserPractices() {
 
   // --- 1. LIST VIEW ---
   const renderListView = () => (
-    <div className="flex flex-col h-full relative overflow-y-auto">
+    <div className="flex flex-col relative">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
         <div>
@@ -293,7 +293,7 @@ export default function UserPractices() {
   const renderDetailView = () => {
     if (!selectedPractice) return null;
     return (
-      <div className="flex flex-col h-full overflow-y-auto">
+      <div className="flex flex-col">
         {/* Detail Header */}
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-neutral-border/40 px-6 py-4 flex items-center justify-between">
           <button 
