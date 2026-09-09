@@ -35,6 +35,8 @@ import { cn } from "@/lib/utils";
 import ProjectIDE from "@/components/ProjectIDE";
 import ProjectDetail from "@/components/ProjectDetail";
 
+import { useLocation } from "react-router-dom";
+
 interface EnvConfig {
   id: string;
   resourcePool: string;
@@ -246,8 +248,15 @@ const getTagStyle = (tagName: string) => {
 
 
 export default function UserProjects() {
+  const location = useLocation();
   const [isEditingProject, setIsEditingProject] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<any>(location.state?.project || null);
+
+  useEffect(() => {
+    if (location.state?.project) {
+      setSelectedProject(location.state.project);
+    }
+  }, [location.state]);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [currentBanner, setCurrentBanner] = useState(0);
 

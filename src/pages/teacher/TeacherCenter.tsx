@@ -180,6 +180,7 @@ export default function TeacherCenter() {
   const [notiFilter, setNotiFilter] = useState<'全部' | '未读' | '已读'>('全部');
   const [notiSearchQuery, setNotiSearchQuery] = useState('');
   const [selectedNotiId, setSelectedNotiId] = useState<number | null>(null);
+  const [isAllReadClicked, setIsAllReadClicked] = useState(false);
 
   const filteredNotis = notifications.filter(n => {
     if (notiFilter === '未读' && n.read) return false;
@@ -201,6 +202,9 @@ export default function TeacherCenter() {
       if (n.id === id) {
         const nextState = !n.read;
         showToast(nextState ? '已被标记为已读' : '已被标记为未读');
+        if (!nextState) {
+          setIsAllReadClicked(false);
+        }
         return { ...n, read: nextState };
       }
       return n;
@@ -214,6 +218,16 @@ export default function TeacherCenter() {
     if (selectedNotiId === id) {
       setSelectedNotiId(null);
     }
+  };
+
+  const handleMarkAllAsRead = () => {
+    setIsAllReadClicked(true);
+    if (unreadCount === 0) {
+      showToast('暂无未读消息');
+      return;
+    }
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    showToast('已将所有消息标记为已读');
   };
 
   // --- Quota State ---
@@ -748,16 +762,20 @@ export default function TeacherCenter() {
             </p>
           </div>
 
-          {/* Quick Statistics Pill */}
+          {/* Action Button */}
           <div className="flex items-center gap-3">
-            <div className="bg-white px-3 py-1.5 rounded border border-neutral-200 text-xs flex items-center gap-2">
-              <span className="text-neutral-500 font-medium">总通知:</span>
-              <span className="font-bold text-neutral-800">{notifications.length}</span>
-            </div>
-            <div className="bg-white px-3 py-1.5 rounded border border-neutral-200 text-xs flex items-center gap-2">
-              <span className="text-neutral-500 font-medium">未读:</span>
-              <span className="font-bold text-[#fa541c]">{unreadCount}</span>
-            </div>
+            <button
+              onClick={handleMarkAllAsRead}
+              className={cn(
+                "px-3.5 py-1.5 text-xs font-medium bg-white border rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs",
+                isAllReadClicked
+                  ? "text-[#fa541c] border-orange-200 bg-orange-50/30"
+                  : "text-neutral-700 border-neutral-200 hover:border-[#fa541c] hover:text-[#fa541c] hover:bg-orange-50/40"
+              )}
+            >
+              <CheckCircle2 className={cn("w-3.5 h-3.5 transition-colors", isAllReadClicked ? "text-[#fa541c]" : "text-neutral-400")} />
+              全部已读
+            </button>
           </div>
         </div>
 
