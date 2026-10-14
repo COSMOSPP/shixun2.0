@@ -6,8 +6,6 @@ import {
   BookOpen, 
   Star, 
   Bell, 
-  Target,
-  Flame,
   ArrowRight,
   Megaphone,
   TrendingUp,
@@ -41,16 +39,6 @@ const CORE_FEATURES = [
     description: "全面支撑教师构建“精品课程”、“金课”体系。支持交互式课件在线演练、实时教案挂载、学情数据多维追溯，打通教、学、练、评闭环。",
     highlights: ["集成 Markdown 与高级交互式教案", "支持富媒体、在线微课与在线PPT演示", "内置精品课、专业基础课多形态模板"],
     mockType: "courses",
-  },
-  {
-    id: "projects",
-    title: "云沙箱项目",
-    icon: Layers,
-    badge: "工程实训中心",
-    tagline: "海量实训项目模板，一键部署虚拟机与容器沙箱",
-    description: "为学生提供开箱即用的工业级实训项目。平台自动根据项目需求调配对应的异构物理机或容器实例，支持端口映射与远程桌面在线调试。",
-    highlights: ["提供企业级真实系统/业务实战沙箱", "预装核心开发包及依赖环境，免配置", "支持一键复制与多人协作调试模式"],
-    mockType: "projects",
   },
   {
     id: "practices",
@@ -320,12 +308,12 @@ const renderFeatureMockup = (mockType: string) => {
     case "courses":
       return (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl h-full flex flex-col justify-between font-sans">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
+            <div className="flex flex-wrap items-center gap-2 min-w-0">
               <span className="w-3 h-3 rounded-full bg-red-500"></span>
               <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
               <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              <span className="text-xs text-slate-500 ml-2 font-mono">zhiyun_course_syllabus.json</span>
+              <span className="text-xs text-slate-500 font-mono break-all">zhiyun_course_syllabus.json</span>
             </div>
             <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-mono">ACTIVE</span>
           </div>
@@ -343,38 +331,12 @@ const renderFeatureMockup = (mockType: string) => {
               <div className="text-xs text-slate-600 pl-4">待发布课程章节</div>
             </div>
           </div>
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+          <div className="pt-4 mt-3 border-t border-slate-800 flex flex-wrap gap-2 items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xs text-slate-400">课程总学时:</span>
               <span className="text-xs font-bold text-white bg-slate-800 px-2 py-0.5 rounded">32 小时</span>
             </div>
             <span className="text-xs text-orange-500 font-bold">交互式课件已就绪</span>
-          </div>
-        </div>
-      );
-    case "projects":
-      return (
-        <div className="bg-[#1e1e1e] border border-slate-800 rounded-2xl shadow-2xl h-full flex flex-col font-mono text-left">
-          <div className="bg-[#252526] px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 rounded-t-2xl">
-            <div className="flex items-center gap-2">
-              <Terminal className="w-3.5 h-3.5 text-blue-400" />
-              <span>ZhiYun WebIDE Terminal</span>
-            </div>
-            <span className="text-blue-400 text-[10px] bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">WORKSPACE</span>
-          </div>
-          <div className="p-4 flex-1 space-y-2 text-xs text-[#d4d4d4] overflow-hidden leading-relaxed">
-            <div><span className="text-emerald-400">zhiyun-admin@cloud-sandbox</span>:<span className="text-blue-400">~/workspace</span>$ npm run dev</div>
-            <div className="text-slate-500">&gt; react-example@0.0.0 dev</div>
-            <div className="text-slate-500">&gt; vite --host --port 3000</div>
-            <div className="text-emerald-400">  ✓ dev server running on port 3000</div>
-            <div className="text-slate-400">  ➜  Local:   <span className="text-blue-400 underline">http://localhost:3000/</span></div>
-            <div className="text-slate-400">  ➜  Network: <span className="text-blue-400 underline">http://192.168.1.100:3000/</span></div>
-            <div className="text-yellow-400">  [HMR] update /src/pages/Home.tsx (x1)</div>
-            <div className="animate-pulse inline-block w-1.5 h-3.5 bg-slate-400 ml-1 align-middle"></div>
-          </div>
-          <div className="bg-[#007acc] text-white px-4 py-1.5 text-xs flex items-center justify-between font-sans rounded-b-2xl">
-            <span>✓ Pre-configured: Python 3.10 + PyTorch 2.2</span>
-            <span>RAM: 3.4GB/16GB</span>
           </div>
         </div>
       );
@@ -606,13 +568,6 @@ export default function Home() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
-    const quickAccess = [
-      { title: "我的课程", desc: "继续您的学习旅程", icon: BookOpen, color: "text-[#fa541c]", bg: "bg-[#fff2e8]", href: "/user/courses" },
-      { title: "我的项目", desc: "管理您的实战沙箱", icon: Target, color: "text-indigo-600", bg: "bg-indigo-50", href: "/login/user" },
-      { title: "最近访问", desc: "快速回到上次进度", icon: Star, color: "text-amber-500", bg: "bg-amber-50", href: "/login/user" },
-      { title: "推荐内容", desc: "发现更多优质资源", icon: Flame, color: "text-rose-500", bg: "bg-rose-50", href: "/user" }
-    ];
-  
     const courses = [
       { title: "Python 核心编程", intro: "零基础掌握 Python，开启编程之路", image: "https://picsum.photos/seed/c1/600/400", tags: ["基础", "编程"] },
       { title: "机器学习实战", intro: "深入浅出核心算法与应用场景", image: "https://picsum.photos/seed/c2/600/400", tags: ["AI", "算法"] },
@@ -638,7 +593,7 @@ export default function Home() {
       <div className="flex flex-col min-h-full bg-[#f8fafc] font-sans selection:bg-orange-100 selection:text-orange-900">
         
         {/* Hero Section - Light Luxury Style */}
-        <div className="relative w-full aspect-[1024/346] min-h-[250px] max-h-[580px] overflow-hidden bg-[#fff5eb]">
+        <div className="relative w-full aspect-[1024/346] min-h-[300px] md:min-h-[250px] max-h-[580px] overflow-hidden bg-[#fff5eb]">
           {slides.map((slide, index) => {
             const isCurrent = index === currentSlide;
             
@@ -677,7 +632,7 @@ export default function Home() {
                 {/* Elegant Light Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#fff5eb]/90 via-[#fff5eb]/65 to-transparent"></div>
                 
-                <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-16 lg:px-24 max-w-5xl">
+                <div className="absolute inset-0 flex flex-col justify-center px-14 md:px-24 pb-8 md:pb-0 max-w-5xl">
                   {slide.badge && (
                     <div className="overflow-hidden mb-4 animate-fade-in-up">
                       <span className="inline-block py-1 px-3 rounded-full bg-[#fff2e8] border border-[#ffbb96] text-[#fa541c] text-sm font-medium tracking-wide">
@@ -685,13 +640,13 @@ export default function Home() {
                       </span>
                     </div>
                   )}
-                  <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight mb-6 leading-[1.15] animate-fade-in-up animation-delay-100">
+                  <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight mb-4 leading-[1.15] animate-fade-in-up animation-delay-100">
                     {slide.title}
                   </h2>
                   <p className="text-sm md:text-xl text-slate-600 font-light max-w-2xl leading-relaxed animate-fade-in-up animation-delay-200">
                     {slide.subtitle}
                   </p>
-                  <div className="mt-8 flex items-center gap-4 animate-fade-in-up animation-delay-300">
+                  <div className="mt-6 flex items-center gap-3 animate-fade-in-up animation-delay-300">
                     <Link to="/user/ai/assistant" className="h-12 px-6 sm:h-14 sm:px-8 inline-flex items-center justify-center rounded-full bg-slate-900 text-white text-sm sm:text-base font-medium hover:bg-slate-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                       开始学习 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                     </Link>
@@ -704,63 +659,48 @@ export default function Home() {
             );
           })}
           
-          {/* Elegant Controls */}
-          <div className="absolute bottom-6 md:bottom-12 right-6 md:right-16 lg:right-24 z-20 flex items-center gap-8">
-            {/* Indicators */}
-            <div className="hidden md:flex gap-3">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all duration-500",
-                    index === currentSlide ? "w-12 bg-slate-900" : "w-4 bg-slate-900/20 hover:bg-slate-900/40"
-                  )}
-                />
-              ))}
-            </div>
-            {/* Arrows */}
-            <div className="flex gap-3">
-              <button onClick={prevSlide} className="w-12 h-12 rounded-full bg-white/50 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-lg transition-all duration-300">
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button onClick={nextSlide} className="w-12 h-12 rounded-full bg-white/50 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-lg transition-all duration-300">
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-  
-        {/* Quick Access - Floating Cards */}
-        <div className="relative z-20 -mt-16 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {quickAccess.map((item, i) => (
-              <Link 
-                key={i} 
-                to={item.href}
-                className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] border border-white transition-all duration-500 group flex items-center gap-5 hover:-translate-y-1.5"
+          {/* Centered indicators and arrows on either side of the banner. */}
+          <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                aria-label={`切换到第 ${index + 1} 张轮播图`}
+                aria-current={index === currentSlide ? "true" : undefined}
+                onClick={() => setCurrentSlide(index)}
+                className="flex h-6 items-center justify-center"
               >
-                <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3", item.bg)}>
-                  <item.icon className={cn("w-7 h-7", item.color)} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 group-hover:text-[#fa541c] transition-colors">{item.title}</h3>
-                  <p className="text-sm text-slate-500 mt-0.5">{item.desc}</p>
-                </div>
-              </Link>
+                <span className={cn(
+                  "block h-1.5 rounded-full transition-all duration-500",
+                  index === currentSlide ? "w-12 bg-slate-900" : "w-4 bg-slate-900/20 hover:bg-slate-900/40"
+                )} />
+              </button>
             ))}
           </div>
+          <button
+            aria-label="上一张轮播图"
+            onClick={prevSlide}
+            className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-20 size-9 md:size-12 rounded-full bg-white/60 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-lg transition-all duration-300"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            aria-label="下一张轮播图"
+            onClick={nextSlide}
+            className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-20 size-9 md:size-12 rounded-full bg-white/60 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-lg transition-all duration-300"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
   
         {/* Main Content Area */}
-        <div className="w-full px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto py-24 space-y-32">
+        <div className="w-full px-5 sm:px-8 lg:px-12 max-w-[1440px] mx-auto py-10 md:py-12 lg:py-16 space-y-12 lg:space-y-16">
           
           {/* Course Browsing */}
           <section id="featured-courses" className="scroll-mt-24">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-8 gap-4">
               <div>
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-3">精选课程</h3>
-                <p className="text-slate-500 text-lg font-light">系统化学习路径，从理论基础到核心技术</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">精选课程</h3>
+                <p className="text-slate-500 text-base font-light leading-relaxed">系统化学习路径，从理论基础到核心技术</p>
               </div>
               <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl self-start md:self-auto overflow-x-auto max-w-full">
                  {scenarios.map(scenario => (
@@ -780,10 +720,10 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
               {courses.map((course, i) => (
                 <Link to="/user/courses" state={{ showDetail: true }} key={i} className="group block bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                  <div className="relative aspect-video overflow-hidden bg-slate-100">
                     <img 
                       src={course.image} 
                       alt={course.title} 
@@ -803,7 +743,7 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-                  <div className="p-6">
+                  <div className="p-5">
                     <h4 className="font-bold text-lg text-slate-900 mb-2 group-hover:text-[#fa541c] transition-colors line-clamp-1">
                       {course.title}
                     </h4>
@@ -818,17 +758,17 @@ export default function Home() {
   
           {/* Best Practices */}
           <section id="best-practices" className="scroll-mt-24">
-            <div className="flex items-end justify-between mb-12">
+            <div className="flex items-end justify-between mb-6 md:mb-8 gap-4">
               <div>
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-3">最佳实践</h3>
-                <p className="text-slate-500 text-lg font-light">真实业务场景驱动，沉浸式积累一线实战经验</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">最佳实践</h3>
+                <p className="text-slate-500 text-base font-light leading-relaxed">真实业务场景驱动，沉浸式积累一线实战经验</p>
               </div>
               <Link to="/user/practices" className="hidden md:flex items-center gap-2 text-[#fa541c] font-medium hover:text-[#e84a15] transition-colors group">
                 查看更多实践 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 md:gap-6">
               {practices.map((practice, i) => (
                 <Link to="/user/practices" state={{ showDetail: true, practiceId: i + 1 }} key={i} className="group block bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100">
                   <div className="relative aspect-video overflow-hidden bg-slate-100">
@@ -843,8 +783,8 @@ export default function Home() {
                       <span className="text-sm font-bold text-slate-900">{practice.rating}</span>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h4 className="font-bold text-lg text-slate-900 mb-4 group-hover:text-[#fa541c] transition-colors line-clamp-2 leading-snug h-[56px]">
+                  <div className="p-5">
+                    <h4 className="font-bold text-lg text-slate-900 mb-3 group-hover:text-[#fa541c] transition-colors line-clamp-2 leading-snug min-h-[50px]">
                       {practice.title}
                     </h4>
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100">
@@ -863,20 +803,17 @@ export default function Home() {
           </section>
 
           {/* ==================== 1. 实训平台功能展示 ==================== */}
-          <section id="platform-showcase" className="scroll-mt-24 bg-white rounded-[32px] p-8 md:p-12 shadow-[0_4px_30px_rgba(0,0,0,0.02)] border border-slate-100/80">
-            <div className="max-w-3xl mb-12 text-left">
-              <span className="inline-block py-1 px-3 rounded-full bg-[#fff2e8] border border-[#ffbb96] text-[#fa541c] text-xs font-semibold tracking-wide uppercase mb-3">
-                ZhiYun Core Features
-              </span>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+          <section id="platform-showcase" className="scroll-mt-24 bg-white rounded-[32px] p-5 sm:p-6 lg:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.02)] border border-slate-100/80">
+            <div className="max-w-3xl mb-6 md:mb-8 text-left">
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
                 实训平台核心功能展示
               </h3>
-              <p className="text-slate-500 text-base md:text-lg font-light leading-relaxed">
-                全方位支撑新形态数字化实训，提供从课程制作、沙箱工程、防作弊考试、竞技比赛到算力调度与安全隔离的一体化闭环保障。
+              <p className="text-slate-500 text-base font-light leading-relaxed">
+                全方位支撑新形态数字化实训，提供从课程制作、最佳实践、防作弊考试、竞技比赛到算力调度与安全隔离的一体化闭环保障。
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 items-stretch">
               {/* Left Selector List - 5 cols */}
               <div className="lg:col-span-5 flex flex-col gap-2.5">
                 {CORE_FEATURES.map((feat) => {
@@ -928,7 +865,7 @@ export default function Home() {
               </div>
 
               {/* Right Showcase Card - 7 cols */}
-              <div className="lg:col-span-7 flex flex-col justify-between bg-slate-950 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-2xl border border-slate-800 min-h-[440px]">
+              <div className="lg:col-span-7 flex flex-col justify-between bg-slate-950 rounded-3xl p-5 sm:p-6 text-white relative overflow-hidden shadow-2xl border border-slate-800">
                 {/* Background ambient light */}
                 <div className="absolute top-0 right-0 w-80 h-80 bg-orange-500/10 rounded-full blur-[80px] -translate-y-1/3 translate-x-1/3"></div>
                 <div className="absolute bottom-0 left-0 w-60 h-60 bg-[#fa541c]/5 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/3"></div>
@@ -953,7 +890,7 @@ export default function Home() {
                       </div>
 
                       {/* Mock UI Rendering based on mockType */}
-                      <div className="h-[210px] flex-shrink-0">
+                      <div className="min-h-[210px] flex-shrink-0 [&>div]:h-auto [&>div]:min-h-[210px]">
                         {renderFeatureMockup(feat.mockType)}
                       </div>
 
@@ -975,15 +912,12 @@ export default function Home() {
 
           {/* ==================== 2. 成功案例展示 ==================== */}
           <section id="success-stories" className="scroll-mt-24">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 text-left">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-8 gap-4 text-left">
               <div>
-                <span className="inline-block py-1 px-3 rounded-full bg-[#fff2e8] border border-[#ffbb96] text-[#fa541c] text-xs font-semibold tracking-wide uppercase mb-3">
-                  ZhiYun Success Cases
-                </span>
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
                   卓越技能，成功案例展示
                 </h3>
-                <p className="text-slate-500 text-base md:text-lg font-light leading-relaxed">
+                <p className="text-slate-500 text-base font-light leading-relaxed">
                   承接多项全国级/省部级大型竞赛与产学研示范工程，为数字化社会建设贡献实训底座。
                 </p>
               </div>
@@ -993,11 +927,11 @@ export default function Home() {
             </div>
 
             {/* Grid layout - 4 cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 text-left">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 text-left">
               {SUCCESS_CASES.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_45px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100 flex flex-col justify-between min-h-[460px]"
+                  className="group relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_45px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100 flex flex-col"
                 >
                   {/* Visual Top section */}
                   <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
@@ -1018,18 +952,18 @@ export default function Home() {
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                  <div className="p-5 sm:p-6 flex-1 flex flex-col">
                     <div>
                       <h4 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-orange-500 transition-colors">
                         {item.title}
                       </h4>
-                      <p className="text-xs md:text-sm text-slate-500 font-light leading-relaxed mb-6">
+                      <p className="text-xs md:text-sm text-slate-500 font-light leading-relaxed">
                         {item.tagline}
                       </p>
                     </div>
 
                     {/* Numeric stats section */}
-                    <div className="grid grid-cols-3 gap-2 py-4 border-t border-slate-100 my-4 bg-slate-50/50 rounded-2xl px-4">
+                    <div className="grid grid-cols-3 gap-2 p-3 mt-4 mb-4 bg-slate-50/50 rounded-2xl">
                       {item.stats.map((stat, sIdx) => (
                         <div key={sIdx} className="text-center px-1">
                           <div className="text-base lg:text-xl font-black text-slate-800 tracking-tight">
@@ -1056,20 +990,17 @@ export default function Home() {
           </section>
 
           {/* ==================== 业务场景展示模块 ==================== */}
-          <section id="business-scenarios" className="scroll-mt-24 bg-white rounded-[32px] p-8 md:p-12 shadow-[0_4px_30px_rgba(0,0,0,0.02)] border border-slate-100/80">
-            <div className="max-w-3xl mb-12 text-left">
-              <span className="inline-block py-1 px-3 rounded-full bg-[#fff2e8] border border-[#ffbb96] text-[#fa541c] text-xs font-semibold tracking-wide uppercase mb-3">
-                ZhiYun Scenarios
-              </span>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-4">
+          <section id="business-scenarios" className="scroll-mt-24 bg-white rounded-[32px] p-5 sm:p-6 lg:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.02)] border border-slate-100/80">
+            <div className="max-w-3xl mb-6 md:mb-8 text-left">
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
                 实训平台业务场景展示
               </h3>
-              <p className="text-slate-500 text-base md:text-lg font-light leading-relaxed">
+              <p className="text-slate-500 text-base font-light leading-relaxed">
                 深度覆盖人工智能开发、云计算编排虚拟化和零信任安全运维审计三大业务场景，与企业真实生产无缝对接。
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 items-stretch">
               {/* Left Selector List - 5 cols */}
               <div className="lg:col-span-5 flex flex-col gap-2.5">
                 {BUSINESS_SCENARIOS.map((feat) => {
@@ -1121,7 +1052,7 @@ export default function Home() {
               </div>
 
               {/* Right Showcase Card - 7 cols */}
-              <div className="lg:col-span-7 flex flex-col justify-between bg-slate-950 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-2xl border border-slate-800 min-h-[400px]">
+              <div className="lg:col-span-7 flex flex-col justify-between bg-slate-950 rounded-3xl p-5 sm:p-6 text-white relative overflow-hidden shadow-2xl border border-slate-800">
                 {/* Background ambient light */}
                 <div className="absolute top-0 right-0 w-80 h-80 bg-orange-500/10 rounded-full blur-[80px] -translate-y-1/3 translate-x-1/3"></div>
                 <div className="absolute bottom-0 left-0 w-60 h-60 bg-[#fa541c]/5 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/3"></div>
@@ -1146,7 +1077,7 @@ export default function Home() {
                       </div>
 
                       {/* Mock UI Rendering based on mockType */}
-                      <div className="h-[180px] flex-shrink-0">
+                      <div className="min-h-[180px] flex-shrink-0 [&>div]:h-auto [&>div]:min-h-[180px]">
                         {renderScenarioMockup(feat.mockType)}
                       </div>
 
@@ -1263,17 +1194,17 @@ export default function Home() {
           )}
   
           {/* Bottom Section: Announcements & Data */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6">
             
             {/* Announcements */}
-            <section className="lg:col-span-1 bg-white rounded-3xl p-8 shadow-[0_2px_20px_rgb(0,0,0,0.02)] border border-slate-100">
-              <div className="flex items-center justify-between mb-8">
+            <section className="lg:col-span-1 bg-white rounded-3xl p-5 sm:p-6 lg:p-8 shadow-[0_2px_20px_rgb(0,0,0,0.02)] border border-slate-100">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight">平台公告</h3>
                 <Link to="/user/center/messages" className="text-sm text-[#fa541c] font-medium hover:text-[#e84a15] transition-colors">
                   全部
                 </Link>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {announcements.map((announcement, i) => (
                   <Link to="/user/center/messages" key={i} className="group flex gap-4 items-start">
                   <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors", announcement.isNew ? "bg-rose-50 text-rose-500 group-hover:bg-rose-100" : "bg-slate-50 text-slate-400 group-hover:bg-slate-100")}>
@@ -1291,39 +1222,52 @@ export default function Home() {
           </section>
 
           {/* Platform Data */}
-          <section className="lg:col-span-2 bg-gradient-to-br from-[#fff6f0] via-[#fffcf9] to-[#fff5eb] rounded-3xl p-8 md:p-12 shadow-sm border border-[#ffbb96]/30 relative overflow-hidden flex flex-col justify-center">
-            {/* Decorative Background with Diffuse/Spread Gradients */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#ffd8bf] to-[#ffbb96] rounded-full blur-[90px] opacity-40 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-[#ffecd2] to-[#fcb69f] rounded-full blur-[100px] opacity-45 translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#fff2e8] rounded-full blur-[100px] opacity-50 pointer-events-none"></div>
-            
+          <section
+            id="platform-data"
+            className="lg:col-span-2 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-[0_12px_36px_-16px_rgba(255,119,36,0.22)] border border-orange-100 relative isolate overflow-hidden flex flex-col justify-center"
+            style={{ background: "radial-gradient(ellipse at 0% 0%, #ffffff 0%, transparent 65%), linear-gradient(115deg, #fff9f2 0%, #ffe9ce 42%, #ffc45c 76%, #ff973d 100%)" }}
+          >
+            {/* Bright floating shapes keep the orange palette light and playful. */}
+            <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-24 -right-20 size-72 rounded-full bg-gradient-to-br from-[#fff59d] to-[#ffbf48] opacity-80" />
+              <div className="absolute -bottom-32 right-16 h-56 w-96 -rotate-12 rounded-full bg-white/25" />
+              <div className="absolute top-8 right-32 h-3 w-10 -rotate-45 rounded-full bg-white/65" />
+              <div className="absolute top-24 right-10 size-3 rounded-full bg-white/75" />
+              <Sparkles className="absolute top-14 right-16 size-7 text-white/80" strokeWidth={1.5} />
+              <div className="absolute bottom-6 left-8 size-3 rounded-full bg-orange-300/40" />
+            </div>
+
             <div className="relative z-10">
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">平台运行数据</h3>
-              <p className="text-slate-500 mb-12 font-light">持续为您提供稳定、高效的实训环境</p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-x divide-[#ffbb96]/30">
-                <div className="text-center px-4">
-                  <div className="text-4xl md:text-5xl font-black text-[#fa541c] mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(250,84,28,0.15)]">1,234</div>
-                  <div className="text-sm font-semibold text-slate-600 tracking-wider">精品课程</div>
+              <div className="flex items-start justify-between gap-4 mb-6 md:mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-2 flex items-center gap-3">
+                    <span aria-hidden="true" className="h-6 w-1 rounded-full bg-[#fa541c]" />
+                    平台运行数据
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base font-light">持续为您提供稳定、高效的实训环境</p>
                 </div>
-                <div className="text-center px-4">
-                  <div className="text-4xl md:text-5xl font-black text-[#fa541c] mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(250,84,28,0.15)]">5,678</div>
-                  <div className="text-sm font-semibold text-slate-600 tracking-wider">实战项目</div>
+                <div aria-hidden="true" className="hidden sm:flex size-11 shrink-0 items-center justify-center rounded-2xl border border-white/80 bg-white/70 text-[#fa541c]">
+                  <Activity className="size-5" />
                 </div>
-                <div className="text-center px-4">
-                  <div className="text-4xl md:text-5xl font-black text-[#fa541c] mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(250,84,28,0.15)]">98k+</div>
-                  <div className="text-sm font-semibold text-slate-600 tracking-wider">注册用户</div>
-                </div>
-                <div className="text-center px-4">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </span>
-                    <div className="text-4xl md:text-5xl font-black text-emerald-600 mb-3 tracking-tight drop-shadow-[0_2px_10px_rgba(5,150,105,0.15)]">1,234</div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-3">
+                {[
+                  { value: "1,234", label: "精品课程" },
+                  { value: "5,678", label: "实战项目" },
+                  { value: "98k+", label: "注册用户" },
+                  { value: "1,234", label: "当前在线", online: true },
+                ].map((metric) => (
+                  <div key={metric.label} className="min-w-0 rounded-2xl border border-white bg-white/90 px-3 py-5 text-center shadow-[0_6px_20px_rgba(255,143,51,0.08)]">
+                    <div className={cn("text-3xl xl:text-4xl font-bold tracking-tight tabular-nums mb-3", metric.online ? "text-emerald-600" : "text-[#ef5015]")}>
+                      {metric.value}
+                    </div>
+                    <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
+                      {metric.online && <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.3)]" />}
+                      {metric.label}
+                    </div>
                   </div>
-                  <div className="text-sm font-semibold text-slate-600 tracking-wider">当前在线</div>
-                </div>
+                ))}
               </div>
             </div>
           </section>
