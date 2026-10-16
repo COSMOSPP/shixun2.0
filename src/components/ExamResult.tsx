@@ -32,6 +32,7 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
           { key: 'D', value: 'Set (集合)' }
         ],
         answer: 'C',
+        analysis: '元组（Tuple）创建后，元素的引用和顺序不能修改，因此属于不可变类型。列表、字典和集合都是可变类型，可以增删元素或修改内容。注意：如果元组中的元素本身是列表等可变对象，该对象的内部内容仍可修改。',
         studentAnswer: studentScore > 11 ? 'C' : 'A',
         isCorrect: studentScore > 11,
         score: studentScore > 11 ? 10 : 0,
@@ -48,6 +49,7 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
           { key: 'D', value: 'func' }
         ],
         answer: 'B',
+        analysis: 'lambda 用于定义匿名函数，语法为 lambda 参数: 表达式，表达式的计算结果就是返回值。例如 lambda x: x * 2 表示将输入乘以 2。def 用于定义普通函数，class 用于定义类，func 不是 Python 关键字。',
         studentAnswer: studentScore >= 80 ? 'B' : 'A',
         isCorrect: studentScore >= 80,
         score: studentScore >= 80 ? 10 : 0,
@@ -64,6 +66,7 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
           { key: 'D', value: '@override' }
         ],
         answer: ['A', 'B', 'C'],
+        analysis: '@property 将方法转换为可通过属性方式访问的接口；@staticmethod 定义不自动接收实例或类参数的静态方法；@classmethod 定义自动接收类参数 cls 的类方法。这三者均是 Python 内置装饰器。@override 需要从 typing 等模块导入，不属于内置装饰器。',
         studentAnswer: studentScore === 100 || studentScore === 80 || studentScore === 56 ? ['A', 'B', 'C'] : (studentScore === 11 ? ['A', 'B'] : []),
         isCorrect: studentScore === 100 || studentScore === 80 || studentScore === 56,
         score: (studentScore === 100 || studentScore === 80 || studentScore === 56) ? 10 : (studentScore === 11 ? 5 : 0),
@@ -80,6 +83,7 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
           { key: 'D', value: '元组的内存开销通常比列表小' }
         ],
         answer: ['A', 'B', 'D'],
+        analysis: '列表可变，元组不可变，二者都支持索引和切片，因此 A、B 正确。列表不可哈希，不能作为字典的键；元组也只有在所有元素均可哈希时才能作为键，因此 C 错误。元组通常比包含相同元素的列表占用更少内存，因此 D 正确。',
         studentAnswer: studentScore === 100 || studentScore === 80 ? ['A', 'B', 'D'] : ['A', 'C'],
         isCorrect: studentScore === 100 || studentScore === 80,
         score: studentScore === 100 || studentScore === 80 ? 10 : 0,
@@ -90,6 +94,7 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
         type: '简答题',
         title: '请简述 Python 中 is 和 == 的区别。',
         answerText: 'is 比较的是两个对象的物理内存地址是否相同（同一性），而 == 比较的是两个对象的值是否相等（相等性）。例如，a = [1, 2] 和 b = [1, 2]，a == b 为 True，但 a is b 为 False。',
+        analysis: 'is 判断两个变量是否引用同一个对象，== 判断对象的值是否相等。两个分别创建的列表即使内容一致，也通常是不同对象。判断是否为 None 时推荐使用 is None；比较数值、字符串或集合内容时应使用 ==，不要依赖小整数缓存或字符串驻留带来的偶然同一性。',
         studentAnswerText: studentScore > 40
           ? 'is 比较的是两个对象的物理内存地址是否相同（同一性），而 == 比较的是两个对象的值是否相等（相等性）。例如，a = [1, 2] 和 b = [1, 2]，a == b 为 True，但 a is b 为 False。'
           : (studentScore === 40 ? 'is比较地址，==比较内容。' : '未作答'),
@@ -102,6 +107,7 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
         type: '实训编程题',
         title: '请编写一个 Python 函数，计算斐波那契数列的第 n 项。要求输入正整数 n，返回对应的斐波那契数，时间复杂度控制在 O(n)。',
         answerText: 'def fibonacci(n):\n    if n <= 0: return 0\n    if n == 1: return 1\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b',
+        analysis: '采用 F(0) = 0、F(1) = 1 的定义，从第 2 项开始按 F(n) = F(n - 1) + F(n - 2) 迭代计算。用 a、b 保存相邻两项，每轮同时更新为 b、a + b，结束后 b 即为第 n 项。该方法迭代次数为 O(n)，只保留两个状态变量，避免了朴素递归的重复计算。边界情况应单独处理 n = 1；可额外约定 n ≤ 0 时返回 0。',
         studentAnswerText: studentScore > 40
           ? 'def fibonacci(n):\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b'
           : (studentScore === 40 ? 'def fibonacci(n):\n    # 递归法（时间复杂度较高）\n    if n <= 1: return n\n    return fibonacci(n-1) + fibonacci(n-2)' : '未作答'),
@@ -301,6 +307,14 @@ export default function ExamResult({ exam, onBack, directPreview = false }: Exam
                         </div>
                       </div>
                     )}
+
+                    <section aria-labelledby="exam-question-analysis-title" className="mt-6 max-w-[900px] rounded-[4px] border border-orange-100 bg-orange-50/30 p-5">
+                      <h3 id="exam-question-analysis-title" className="mb-2.5 flex items-center gap-2 text-[14px] font-bold text-neutral-800">
+                        <BookOpen className="h-4 w-4 text-[#fa541c]" />
+                        试题解析
+                      </h3>
+                      <p className="whitespace-pre-wrap break-words text-[13px] leading-7 text-neutral-600">{q.analysis || '暂无试题解析'}</p>
+                    </section>
                   </div>
 
                   {/* Bottom Actions Row */}

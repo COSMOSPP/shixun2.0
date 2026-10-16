@@ -1,0 +1,21 @@
+// Match the teacher exam creation drawer across competition management panels.
+export const competitionDrawerStyles = {
+  overlay: "fixed inset-0 z-[200] bg-black/45 backdrop-blur-[2px] flex justify-end animate-fade-in text-left text-[13px]",
+  panel: "bg-white w-full h-dvh flex flex-col shadow-2xl border-l border-neutral-100 animate-in slide-in-from-right duration-300 relative outline-none",
+  header: "h-[60px] px-6 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/50 z-10 shrink-0 gap-3",
+  title: "text-[15px] font-bold text-neutral-850",
+  close: "text-neutral-400 hover:text-[#fa541c] p-1.5 hover:bg-neutral-100 rounded-[4px] transition-colors cursor-pointer border-0 bg-transparent shrink-0",
+  body: "p-6 overflow-y-auto space-y-5 custom-scrollbar flex-1 min-h-0 bg-white relative text-[13px]",
+  footer: "px-6 py-4 border-t border-neutral-100 flex items-center justify-end gap-3 bg-neutral-50/50 z-10 shrink-0",
+  primary: "bg-[#fa541c] hover:bg-[#e84a15] text-white font-bold h-9 px-6 text-xs transition-all rounded-[4px] shadow-sm border-0 cursor-pointer disabled:opacity-50 disabled:pointer-events-none",
+  secondary: "border border-neutral-200 text-neutral-600 font-bold h-9 px-5 text-xs hover:bg-neutral-100 transition-all rounded-[4px] cursor-pointer bg-white disabled:opacity-50 disabled:pointer-events-none",
+  input: "w-full min-w-0 border border-neutral-200 rounded-[4px] px-3.5 py-2 text-[13px] focus:outline-none focus:border-[#fa541c] focus:ring-1 focus:ring-[#fa541c]/25 transition-all text-[#262626] placeholder:text-neutral-400 bg-white",
+  field: "grid grid-cols-1 sm:grid-cols-[100px_minmax(0,1fr)] items-center gap-2 sm:gap-4",
+  label: "text-[13px] font-bold text-[#262626] sm:text-right",
+  tabList: "flex border-b border-neutral-100 bg-white text-xs select-none shrink-0",
+  tab: "py-3 px-4 border-b-2 transition-colors cursor-pointer flex items-center justify-center whitespace-nowrap",
+  activeTab: "border-[#fa541c] text-[#fa541c] font-bold",
+  inactiveTab: "border-transparent text-neutral-500 hover:text-neutral-800 hover:bg-neutral-50/50",
+  card: "border border-neutral-200 rounded-[4px] bg-white overflow-hidden",
+  table: "border border-neutral-200 rounded-[4px] overflow-x-auto",
+};

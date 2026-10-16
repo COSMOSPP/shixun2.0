@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { 
   Trophy, Users, Award, Clock, CheckCircle, AlertTriangle, Search, 
   Plus, Edit, Trash2, Shield, Calendar, BookOpen, ChevronRight, X,
   FileText, Sliders, Play, TrendingUp, BarChart2, Download, Filter, 
-  AlertCircle, Settings, Check, RefreshCw
+  AlertCircle, Settings, Check, RefreshCw, ChevronDown, ChevronLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createPortal } from "react-dom";
+import { Button } from "@/components/ui/button";
+import { competitionDrawerStyles as drawerStyles } from "@/components/competition/competitionDrawerStyles";
+import CompetitionFormDrawer, { CompetitionFormValues } from "@/components/competition/CompetitionFormDrawer";
+import CompetitionOperationsDrawer from "@/components/competition/CompetitionOperationsDrawer";
+import { CompetitionOperationData, CompetitionOperationMode, createCompetitionOperationData } from "@/components/competition/competitionOperations";
 
 // --- Types & Data Interfaces ---
 
-interface Competition {
+interface Competition extends Partial<CompetitionFormValues> {
   id: string;
   name: string;
   type: string;
@@ -23,6 +29,9 @@ interface Competition {
   ruleFiles: string;
   ruleGpu: string;
   evalMetric: string;
+  visible: boolean;
+  creator: string;
+  createdAt: string;
 }
 
 interface ApplicationRequest {
@@ -64,7 +73,8 @@ interface LeaderboardRecord {
 
 const initialCompetitions: Competition[] = [
   { 
-    id: "comp-1", 
+    id: "comp-1",
+    visible: true, creator: "运营管理员", createdAt: "2026-02-12 14:30",
     name: "2026年智云杯大语言模型应用创新赛", 
     type: "大模型开发", 
     status: "进行中", 
@@ -79,7 +89,8 @@ const initialCompetitions: Competition[] = [
     evalMetric: "Accuracy / F1-Score" 
   },
   { 
-    id: "comp-2", 
+    id: "comp-2",
+    visible: true, creator: "运营管理员", createdAt: "2026-03-01 09:20",
     name: "医疗影像肺部病灶分割挑战赛", 
     type: "计算机视觉", 
     status: "进行中", 
@@ -94,7 +105,8 @@ const initialCompetitions: Competition[] = [
     evalMetric: "Mean IoU" 
   },
   { 
-    id: "comp-3", 
+    id: "comp-3",
+    visible: true, creator: "运营管理员", createdAt: "2025-11-15 10:00",
     name: "金融风控非平衡样本分类预测算法赛", 
     type: "机器学习", 
     status: "已结束", 
@@ -109,7 +121,8 @@ const initialCompetitions: Competition[] = [
     evalMetric: "AUC / LogLoss" 
   },
   { 
-    id: "comp-4", 
+    id: "comp-4",
+    visible: true, creator: "运营管理员", createdAt: "2026-03-20 16:15",
     name: "智能客服多轮多意图对话评测赛", 
     type: "自然语言处理", 
     status: "报名中", 
@@ -124,7 +137,8 @@ const initialCompetitions: Competition[] = [
     evalMetric: "BLEU / ROUGE" 
   },
   { 
-    id: "comp-5", 
+    id: "comp-5",
+    visible: true, creator: "运营管理员", createdAt: "2026-05-18 11:40",
     name: "第三届网络安全云原生微服务渗透对抗赛", 
     type: "安全对抗", 
     status: "筹备中", 
@@ -223,7 +237,7 @@ const initialLeaderboards: Record<string, LeaderboardRecord[]> = {
 };
 
 export default function AdminCompetitionsPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "list" | "review" | "teams" | "scores">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "list" | "review" | "teams" | "scores">("list");
 
   // --- Dynamic State Managers ---
   const [competitions, setCompetitions] = useState<Competition[]>(initialCompetitions);
@@ -233,8 +247,36 @@ export default function AdminCompetitionsPage() {
 
   // --- Filter & Search States ---
   const [compSearch, setCompSearch] = useState("");
-  const [compTypeFilter, setCompTypeFilter] = useState("全部");
-  const [compStatusFilter, setCompStatusFilter] = useState("全部");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [actionMenu, setActionMenu] = useState<{ id: string; top: number; left: number } | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [scoreMode, setScoreMode] = useState<"grade" | "view">("view");
+  const [managementDialog, setManagementDialog] = useState<{ id: string; mode: "cockpit" } | null>(null);
+  const [operationsTarget, setOperationsTarget] = useState<{ id: string; mode: CompetitionOperationMode } | null>(null);
+  const [operationsData, setOperationsData] = useState<Record<string, CompetitionOperationData>>({});
+
+  useEffect(() => { setPage(1); setActionMenu(null); }, [compSearch, pageSize]);
+  useEffect(() => {
+    if (!actionMenu) return;
+    const close = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node) && !(event.target instanceof Element && event.target.closest("[data-comp-actions]"))) setActionMenu(null);
+    };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setActionMenu(null); };
+    const closeOnScroll = (event: Event) => {
+      if (!menuRef.current?.contains(event.target as Node) && !(event.target instanceof Element && event.target.closest("[data-comp-actions]"))) setActionMenu(null);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", escape);
+    window.addEventListener("resize", closeOnScroll);
+    window.addEventListener("scroll", closeOnScroll, true);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", escape);
+      window.removeEventListener("resize", closeOnScroll);
+      window.removeEventListener("scroll", closeOnScroll, true);
+    };
+  }, [actionMenu]);
 
   // --- Dropdown Selector for Sub-tabs ---
   const [selectedCompId, setSelectedCompId] = useState("comp-1");
@@ -243,18 +285,6 @@ export default function AdminCompetitionsPage() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [drawerMode, setDrawerMode] = useState<"create" | "edit">("create");
   const [editingCompId, setEditingCompId] = useState<string | null>(null);
-
-  // Drawer Form States
-  const [formName, setFormName] = useState("");
-  const [formType, setFormType] = useState("大模型开发");
-  const [formStatus, setFormStatus] = useState<"筹备中" | "报名中" | "进行中" | "已结束">("筹备中");
-  const [formDuration, setFormDuration] = useState("2026-06-01 至 2026-08-31");
-  const [formDescription, setFormDescription] = useState("");
-  const [formFormat, setFormFormat] = useState("团队赛 (最大5人)");
-  const [formMaxSubmissions, setFormMaxSubmissions] = useState(5);
-  const [formFiles, setFormFiles] = useState("zip");
-  const [formGpu, setFormGpu] = useState("50 GPU小时");
-  const [formEvalMetric, setFormEvalMetric] = useState("Accuracy");
 
   // --- Modals & Popovers ---
   const [selectedApp, setSelectedApp] = useState<ApplicationRequest | null>(null);
@@ -281,82 +311,37 @@ export default function AdminCompetitionsPage() {
   const handleOpenCreateDrawer = () => {
     setDrawerMode("create");
     setEditingCompId(null);
-    setFormName("");
-    setFormType("大模型开发");
-    setFormStatus("筹备中");
-    setFormDuration("2026-06-01 至 2026-08-31");
-    setFormDescription("");
-    setFormFormat("团队赛 (最大5人)");
-    setFormMaxSubmissions(5);
-    setFormFiles("zip");
-    setFormGpu("50 GPU小时");
-    setFormEvalMetric("Accuracy");
     setShowDrawer(true);
   };
 
   const handleOpenEditDrawer = (comp: Competition) => {
     setDrawerMode("edit");
     setEditingCompId(comp.id);
-    setFormName(comp.name);
-    setFormType(comp.type);
-    setFormStatus(comp.status);
-    setFormDuration(comp.duration);
-    setFormDescription(comp.description);
-    setFormFormat(comp.format);
-    setFormMaxSubmissions(comp.ruleMaxSubmissions);
-    setFormFiles(comp.ruleFiles);
-    setFormGpu(comp.ruleGpu);
-    setFormEvalMetric(comp.evalMetric);
     setShowDrawer(true);
   };
 
-  const handleSaveCompetition = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formName.trim()) return;
-
+  const handleSaveCompetition = (values: CompetitionFormValues) => {
+    const fields = {
+      ...values,
+      duration: `${values.startAt.replace("T", " ")} 至 ${values.endAt.replace("T", " ")}`
+    };
     if (drawerMode === "create") {
       const newId = `comp-${Date.now()}`;
       const newComp: Competition = {
-        id: newId,
-        name: formName,
-        type: formType,
-        status: formStatus,
-        duration: formDuration,
-        teamsCount: 0,
-        participants: 0,
-        description: formDescription,
-        format: formFormat,
-        ruleMaxSubmissions: formMaxSubmissions,
-        ruleFiles: formFiles,
-        ruleGpu: formGpu,
-        evalMetric: formEvalMetric
+        ...fields, id: newId, status: "筹备中", teamsCount: 0,
+        format: "团队赛 (最大5人)", ruleMaxSubmissions: 5, ruleFiles: "zip",
+        ruleGpu: "50 GPU小时", evalMetric: "Accuracy", visible: true,
+        creator: "运营管理员", createdAt: new Date().toLocaleString("sv-SE").slice(0, 16)
       };
-
-      setCompetitions([newComp, ...competitions]);
-      // Initialize empty lists for teams and leaderboards
-      setTeams(prev => ({ ...prev, [newId]: [] }));
-      setLeaderboards(prev => ({ ...prev, [newId]: [] }));
-
-      triggerToast(`🎉 成功创建竞赛项目：「${formName}」`);
-    } else if (drawerMode === "edit" && editingCompId) {
-      setCompetitions(competitions.map(c => 
-        c.id === editingCompId 
-          ? { 
-              ...c, 
-              name: formName, 
-              type: formType, 
-              status: formStatus, 
-              duration: formDuration, 
-              description: formDescription,
-              format: formFormat,
-              ruleMaxSubmissions: formMaxSubmissions,
-              ruleFiles: formFiles,
-              ruleGpu: formGpu,
-              evalMetric: formEvalMetric
-            } 
-          : c
-      ));
-      triggerToast(`💾 成功保存更新竞赛项目：「${formName}」`);
+      setCompetitions(previous => [newComp, ...previous]);
+      setCompSearch("");
+      setPage(1);
+      setTeams(previous => ({ ...previous, [newId]: [] }));
+      setLeaderboards(previous => ({ ...previous, [newId]: [] }));
+      triggerToast(`成功创建竞赛：「${values.name}」`);
+    } else if (editingCompId) {
+      setCompetitions(previous => previous.map(comp => comp.id === editingCompId ? { ...comp, ...fields } : comp));
+      triggerToast(`已保存竞赛：「${values.name}」`);
     }
     setShowDrawer(false);
   };
@@ -364,15 +349,12 @@ export default function AdminCompetitionsPage() {
   const handleDeleteCompetition = (id: string, name: string) => {
     if (confirm(`确定要彻底删除该竞赛项目吗？「${name}」\n删除后将无法恢复其下的队伍及成绩记录！`)) {
       setCompetitions(competitions.filter(c => c.id !== id));
+      setTeams(prev => { const next = { ...prev }; delete next[id]; return next; });
+      setLeaderboards(prev => { const next = { ...prev }; delete next[id]; return next; });
+      setOperationsData(prev => { const next = { ...prev }; delete next[id]; return next; });
+      if (selectedCompId === id) setSelectedCompId(competitions.find(comp => comp.id !== id)?.id || "");
       triggerToast(`🗑️ 已彻底删除竞赛项目：「${name}」`);
     }
-  };
-
-  const handleToggleStatus = (id: string, nextStatus: Competition["status"]) => {
-    setCompetitions(competitions.map(c => 
-      c.id === id ? { ...c, status: nextStatus } : c
-    ));
-    triggerToast(`🔄 竞赛状态已调整为: [${nextStatus}]`);
   };
 
   // Applications approval workflows
@@ -395,7 +377,8 @@ export default function AdminCompetitionsPage() {
       ruleMaxSubmissions: 5,
       ruleFiles: "zip",
       ruleGpu: "50 GPU小时",
-      evalMetric: "AUC"
+      evalMetric: "AUC",
+      visible: true, creator: app.teacher, createdAt: new Date().toLocaleString("sv-SE").slice(0, 16)
     };
 
     setCompetitions([newComp, ...competitions]);
@@ -473,67 +456,100 @@ export default function AdminCompetitionsPage() {
   // Filters computed list
   const filteredCompetitions = competitions.filter(c => {
     const matchesSearch = c.name.toLowerCase().includes(compSearch.toLowerCase()) || c.description.toLowerCase().includes(compSearch.toLowerCase());
-    const matchesType = compTypeFilter === "全部" || c.type === compTypeFilter;
-    const matchesStatus = compStatusFilter === "全部" || c.status === compStatusFilter;
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch;
   });
 
+  const pageCount = Math.max(1, Math.ceil(filteredCompetitions.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const pagedCompetitions = filteredCompetitions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const actionClass = "text-[#fa541c] hover:text-[#e84a15] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs font-semibold whitespace-nowrap";
+  const menuCompetition = competitions.find(comp => comp.id === actionMenu?.id);
+  const dialogCompetition = competitions.find(comp => comp.id === managementDialog?.id);
+
+  const operationCompetition = competitions.find(comp => comp.id === operationsTarget?.id);
+  const openOperations = (comp: Competition, mode: CompetitionOperationMode) => {
+    setActionMenu(null);
+    setOperationsData(prev => prev[comp.id] ? prev : {
+      ...prev,
+      [comp.id]: createCompetitionOperationData(comp, (teams[comp.id] || []).map(team => {
+        const record = leaderboards[comp.id]?.find(item => item.teamId === team.id);
+        return { id: team.id, name: team.captain, file: record?.file, report: record?.codeReport };
+      }))
+    });
+    setOperationsTarget({ id: comp.id, mode });
+  };
+  const openManagementDialog = (comp: Competition, mode: "checks" | "scoring" | "proctor" | "cockpit") => {
+    setActionMenu(null);
+    if (mode === "cockpit") setManagementDialog({ id: comp.id, mode });
+    else openOperations(comp, mode);
+  };
+
+  const handleCopyCompetition = (comp: Competition) => {
+    const id = `comp-${Date.now()}`;
+    setCompetitions(prev => [{ ...comp, id, name: `${comp.name}（副本）`, status: "筹备中", visible: false, teamsCount: 0, participants: 0, creator: "运营管理员", createdAt: new Date().toLocaleString("sv-SE").slice(0, 16) }, ...prev]);
+    setTeams(prev => ({ ...prev, [id]: [] }));
+    setLeaderboards(prev => ({ ...prev, [id]: [] }));
+    if (operationsData[comp.id]) setOperationsData(prev => ({ ...prev, [id]: { ...structuredClone(prev[comp.id]), candidates: [] } }));
+    setCompSearch(""); setPage(1);
+    triggerToast("竞赛已复制，副本默认隐藏并处于筹备中");
+  };
+
+  const resetCompetition = (comp: Competition) => {
+    if (!window.confirm(`确定重置「${comp.name}」吗？将清空报名队伍及成绩，并恢复为隐藏、筹备中状态。`)) return;
+    setCompetitions(prev => prev.map(item => item.id === comp.id ? { ...item, status: "筹备中", visible: false, teamsCount: 0, participants: 0 } : item));
+    setTeams(prev => ({ ...prev, [comp.id]: [] }));
+    setLeaderboards(prev => ({ ...prev, [comp.id]: [] }));
+    setOperationsData(prev => prev[comp.id] ? { ...prev, [comp.id]: { ...prev[comp.id], candidates: [] } } : prev);
+    triggerToast("竞赛已重置，规则配置已保留");
+  };
+
+
   return (
-    <div className="flex h-full w-full bg-white overflow-hidden text-neutral-800 font-sans">
+    <div className="flex min-h-full w-full bg-[#f5f6f8] text-neutral-800 font-sans">
       
-      {/* Left Navigation Sidebar */}
-      <div className="w-[240px] border-r border-neutral-border flex-shrink-0 flex flex-col bg-white h-full select-none">
-        {/* Title Header */}
-        <div className="p-5 border-b border-neutral-border shrink-0 flex items-center gap-2.5">
-          <Trophy className="w-5 h-5 text-[#fa541c]" />
-          <div>
-            <h2 className="text-sm font-black text-neutral-title leading-tight">公开竞赛管理</h2>
-            <span className="text-[10px] text-neutral-caption font-bold">ZHIYUN COMPETITION HUB</span>
+      <div className="flex-1 min-w-0 overflow-auto p-6 flex flex-col custom-scrollbar relative">
+        {activeTab !== "list" && <button onClick={() => setActiveTab("list")} className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-[#fa541c] cursor-pointer mb-5 self-start"><ChevronLeft className="w-4 h-4" />返回竞赛列表</button>}
+
+        {actionMenu && menuCompetition && createPortal(
+          <div ref={menuRef} role="menu" aria-label="竞赛更多操作" className="fixed w-[132px] bg-white border border-neutral-200 rounded-[4px] shadow-lg z-[60] overflow-y-auto py-1 max-h-[calc(100vh-16px)]" style={{ top: actionMenu.top, left: actionMenu.left }}>
+            {[
+              { label: "编辑竞赛", run: () => handleOpenEditDrawer(menuCompetition) },
+              { label: "检查项", run: () => openManagementDialog(menuCompetition, "checks") },
+              { label: "分值配比", run: () => openManagementDialog(menuCompetition, "scoring") },
+              { label: "监考信息", run: () => openManagementDialog(menuCompetition, "proctor") },
+              { label: "参赛队伍", run: () => { setSelectedCompId(menuCompetition.id); setActiveTab("teams"); } },
+              { label: "复制", run: () => handleCopyCompetition(menuCompetition) },
+              { label: menuCompetition.visible ? "隐藏" : "显示", run: () => { setCompetitions(prev => prev.map(comp => comp.id === menuCompetition.id ? { ...comp, visible: !comp.visible } : comp)); triggerToast(menuCompetition.visible ? "竞赛已隐藏" : "竞赛已显示"); } },
+              { label: "驾驶舱", run: () => openManagementDialog(menuCompetition, "cockpit") },
+              { label: "重置", danger: true, run: () => resetCompetition(menuCompetition) },
+              { label: "删除", danger: true, run: () => handleDeleteCompetition(menuCompetition.id, menuCompetition.name) }
+            ].map(action => <button key={action.label} role="menuitem" onClick={() => { setActionMenu(null); action.run(); }} className={cn("block w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer", action.danger ? "text-red-500 hover:bg-red-50" : "text-neutral-700 hover:bg-orange-50/40 hover:text-[#fa541c]")}>{action.label}</button>)}
+          </div>, document.body
+        )}
+
+        <CompetitionOperationsDrawer
+          target={operationsTarget && operationCompetition ? { competition: operationCompetition, mode: operationsTarget.mode } : null}
+          data={operationsTarget ? operationsData[operationsTarget.id] || null : null}
+          onChange={data => { if (operationsTarget) setOperationsData(prev => ({ ...prev, [operationsTarget.id]: data })); }}
+          onClose={() => setOperationsTarget(null)}
+          onNotify={triggerToast}
+        />
+        {managementDialog && dialogCompetition && (
+          <div className={drawerStyles.overlay} onClick={() => setManagementDialog(null)}>
+            <div role="dialog" aria-modal="true" aria-label="竞赛驾驶舱" className={cn(drawerStyles.panel, "max-w-[680px]")} onClick={event => event.stopPropagation()}>
+              <div className={drawerStyles.header}><h2 className={drawerStyles.title}>竞赛驾驶舱</h2><button aria-label="关闭驾驶舱" onClick={() => setManagementDialog(null)} className={drawerStyles.close}><X className="w-4 h-4" /></button></div>
+              <div className={drawerStyles.body}><p className="text-neutral-500">{dialogCompetition.name}</p><div className="grid grid-cols-2 gap-4">{[
+                ["报名人数", dialogCompetition.participants.toLocaleString()], ["参赛队伍", dialogCompetition.teamsCount.toLocaleString()],
+                ["已上榜队伍", (leaderboards[dialogCompetition.id]?.length || 0).toString()], ["最高得分", leaderboards[dialogCompetition.id]?.length ? Math.max(...leaderboards[dialogCompetition.id].map(record => record.score)).toFixed(4) : "—"]
+              ].map(([label, value]) => <div key={label} className="bg-neutral-50 rounded border border-neutral-100 p-4"><p className="text-xs text-neutral-500 mb-2">{label}</p><p className="text-xl font-semibold text-neutral-800">{value}</p></div>)}</div><p className="text-neutral-500 text-xs">竞赛周期：{dialogCompetition.duration}</p></div>
+              <div className={drawerStyles.footer}><Button variant="outline" className={drawerStyles.secondary} onClick={() => setManagementDialog(null)}>关闭</Button></div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Tab Options */}
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
-          {[
-            { id: "overview", title: "数据大盘", icon: BarChart2 },
-            { id: "list", title: "竞赛列表与状态", icon: Trophy },
-            { id: "review", title: "公开申请审核", icon: Shield, badge: applications.filter(a => a.status === "待审核").length },
-            { id: "teams", title: "参赛队伍管理", icon: Users },
-            { id: "scores", title: "成绩与排行榜", icon: TrendingUp }
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={cn(
-                  "w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] text-[13px] font-semibold transition-all duration-200 cursor-pointer border-0 bg-transparent text-left",
-                  isActive 
-                    ? "bg-[#fff2e8] text-[#fa541c] shadow-3xs" 
-                    : "text-neutral-body hover:bg-neutral-bg hover:text-neutral-title"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <tab.icon className="w-4.5 h-4.5 shrink-0" />
-                  <span>{tab.title}</span>
-                </div>
-                {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold scale-90">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Right Content Workspace */}
-      <div className="flex-1 overflow-auto bg-[#f5f6f8] p-8 flex flex-col min-h-0 custom-scrollbar relative">
-        
         {/* Toast Alert Pop-up */}
         {toastMessage && (
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white px-5 py-3 rounded-lg shadow-lg flex items-center gap-2 border border-neutral-800 text-xs font-bold animate-slide-up">
+          <div role="status" className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] bg-neutral-900 text-white px-5 py-3 rounded-lg shadow-lg flex items-center gap-2 border border-neutral-800 text-xs font-bold animate-slide-up">
             <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{toastMessage}</span>
           </div>
@@ -660,386 +676,80 @@ export default function AdminCompetitionsPage() {
 
         {/* ==================== 2. 竞赛列表与状态管理 ==================== */}
         {activeTab === "list" && (
-          <div className="space-y-6 flex flex-col flex-1 min-h-0 animate-slide-up">
-            
-            {/* Tab Header */}
-            <div className="flex justify-between items-start shrink-0">
-              <div>
-                <h1 className="text-lg font-black text-neutral-title flex items-center gap-2">
-                  <Trophy className="w-5.5 h-5.5 text-[#fa541c]" />
-                  <span>平台公开竞赛库</span>
-                </h1>
-                <p className="text-xs text-neutral-caption mt-1">
-                  管理和发布平台的公开性科学竞赛，监控赛制流转，审核公开申请并动态发布。
-                </p>
-              </div>
-              <button 
-                onClick={handleOpenCreateDrawer}
-                className="bg-[#fa541c] hover:bg-[#e84a15] text-white text-xs font-bold px-4 py-2.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-3xs"
-              >
-                <Plus className="w-4 h-4 font-black" />
-                <span>新建公开竞赛</span>
-              </button>
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-end gap-4 mb-4">
+              <h1 className="text-xl font-bold text-neutral-900">竞赛管理</h1>
+              <p className="text-sm text-neutral-500 mb-0.5">统一管理竞赛信息、参赛报名与成绩，跟进赛事全流程</p>
             </div>
-
-            {/* Search and filter toolbar */}
-            <div className="flex flex-col md:flex-row gap-4 shrink-0 justify-between items-center">
-              {/* Search bar */}
-              <div className="relative w-full md:w-[280px]">
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-neutral-400" />
-                <input
-                  type="text"
-                  placeholder="搜索竞赛名称或描述..."
-                  value={compSearch}
-                  onChange={(e) => setCompSearch(e.target.value)}
-                  className="w-full border border-neutral-200 rounded-lg pl-9 pr-4 py-1.5 text-xs focus:outline-none focus:border-[#fa541c] bg-white text-neutral-800 font-medium placeholder-neutral-400"
-                />
-              </div>
-
-              {/* Select filters */}
-              <div className="flex items-center gap-3.5 w-full md:w-auto">
-                <div className="flex items-center gap-2 text-xs font-bold text-neutral-body">
-                  <Filter className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>赛道类别:</span>
-                  <select 
-                    value={compTypeFilter}
-                    onChange={(e) => setCompTypeFilter(e.target.value)}
-                    className="border border-neutral-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-[#fa541c]"
-                  >
-                    <option value="全部">全部赛道</option>
-                    <option value="大模型开发">大模型开发</option>
-                    <option value="计算机视觉">计算机视觉</option>
-                    <option value="机器学习">机器学习</option>
-                    <option value="自然语言处理">自然语言处理</option>
-                    <option value="安全对抗">安全对抗</option>
-                  </select>
+            <div className="bg-white rounded-[8px] border border-neutral-border overflow-hidden">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 py-4 border-b border-neutral-border/50">
+                <div className="flex items-center flex-wrap gap-3">
+                  <div className="relative w-72 max-w-full">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                    <input aria-label="搜索竞赛" type="text" placeholder="搜索竞赛名称或描述" value={compSearch} onChange={e => setCompSearch(e.target.value)}
+                      className="pl-9 pr-4 py-2 w-full bg-white border border-neutral-border rounded-full text-sm focus:outline-none focus:border-[#fa541c] focus:ring-1 focus:ring-[#fa541c] text-neutral-800 transition-all placeholder:text-neutral-400" />
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-2 text-xs font-bold text-neutral-body">
-                  <span>竞赛状态:</span>
-                  <select 
-                    value={compStatusFilter}
-                    onChange={(e) => setCompStatusFilter(e.target.value)}
-                    className="border border-neutral-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-[#fa541c]"
-                  >
-                    <option value="全部">所有状态</option>
-                    <option value="筹备中">筹备中</option>
-                    <option value="报名中">报名中</option>
-                    <option value="进行中">进行中</option>
-                    <option value="已结束">已结束</option>
-                  </select>
-                </div>
+                <Button onClick={handleOpenCreateDrawer} className="bg-[#fa541c] hover:bg-[#e84a15] text-white flex items-center gap-1.5 shadow-sm h-9 px-4 rounded-[4px] text-xs font-semibold cursor-pointer border-0 shrink-0 self-end lg:self-auto">
+                  <Plus className="w-3.5 h-3.5" />新建竞赛
+                </Button>
               </div>
-            </div>
-
-            {/* Competitions table list container */}
-            <div className="bg-white rounded-xl border border-neutral-border shadow-3xs overflow-hidden flex-1 flex flex-col min-h-[300px]">
-              <div className="overflow-x-auto flex-1 custom-scrollbar">
-                <table className="w-full text-left border-collapse min-w-[900px]">
-                  <thead>
-                    <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[11.5px] text-neutral-600 font-bold uppercase select-none">
-                      <th className="px-6 py-4">竞赛名称</th>
-                      <th className="px-6 py-4">赛道类型</th>
-                      <th className="px-6 py-4">报名情况 (队伍/人数)</th>
-                      <th className="px-6 py-4">状态流转</th>
-                      <th className="px-6 py-4">竞赛周期</th>
-                      <th className="px-6 py-4 text-center">操作</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100 text-xs">
-                    {filteredCompetitions.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-neutral-400">
-                          <AlertCircle className="w-8 h-8 text-neutral-300 mx-auto mb-2 animate-pulse" />
-                          <span>没有找到符合搜索和筛选条件的竞赛项目。</span>
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left border-collapse whitespace-nowrap min-w-[1100px]">
+                  <thead><tr className="border-b border-neutral-border/50 bg-neutral-50/50 text-[13px] text-neutral-600">
+                    <th className="pl-6 pr-3 py-3.5 font-medium">竞赛名称</th>
+                    {["可见状态", "竞赛状态", "报名人数", "创建人", "开始时间", "结束时间", "创建时间"].map(label => <th key={label} className="px-3 py-3.5 font-medium">{label}</th>)}
+                    <th className="pl-3 pr-6 py-3.5 font-medium sticky right-0 bg-[#fafafa]">操作</th>
+                  </tr></thead>
+                  <tbody>
+                    {pagedCompetitions.length === 0 ? <tr><td colSpan={9} className="py-16 text-center text-sm text-neutral-400"><Search className="w-8 h-8 mx-auto mb-3 text-neutral-300" />暂无符合条件的竞赛</td></tr> : pagedCompetitions.map(comp => (
+                      <tr key={comp.id} className="border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50/30 transition-colors group text-[13px]">
+                        <td className="pl-6 pr-3 py-4"><span className="text-neutral-800 font-medium block max-w-[260px] truncate" title={comp.name}>{comp.name}</span></td>
+                        <td className="px-3 py-4"><span className={cn("px-2 py-0.5 text-[12px] rounded-[4px] border", comp.visible ? "bg-green-50 text-green-600 border-green-200" : "bg-neutral-50 text-neutral-500 border-neutral-200")}>{comp.visible ? "显示" : "隐藏"}</span></td>
+                        <td className="px-3 py-4"><span className={cn("px-2 py-0.5 text-[12px] rounded-[4px] border", comp.status === "进行中" ? "bg-green-50 text-green-600 border-green-200" : comp.status === "报名中" ? "bg-blue-50 text-blue-600 border-blue-200" : comp.status === "筹备中" ? "bg-amber-50 text-amber-600 border-amber-200" : "bg-red-50 text-red-500 border-red-200")}>{comp.status}</span></td>
+                        <td className="px-3 py-4 text-neutral-600">{comp.participants.toLocaleString()}</td>
+                        <td className="px-3 py-4 text-neutral-600">{comp.creator}</td>
+                        <td className="px-3 py-4 text-neutral-600">{comp.duration.split(" 至 ")[0]}</td>
+                        <td className="px-3 py-4 text-neutral-600">{comp.duration.split(" 至 ")[1] || "—"}</td>
+                        <td className="px-3 py-4 text-neutral-600"><div>{comp.createdAt.split(" ")[0]}</div><div className="text-xs text-neutral-400 mt-1">{comp.createdAt.split(" ")[1]}</div></td>
+                        <td className="pl-3 pr-6 py-4 sticky right-0 bg-white group-hover:bg-[#fdfdfd]">
+                          <div className="flex items-center gap-2.5">
+                            <button className={actionClass} onClick={() => openOperations(comp, "grading")}>批阅</button>
+                            <button className={actionClass} onClick={() => openOperations(comp, "results")}>查看成绩</button>
+                            <button data-comp-actions aria-label={`${comp.name}的更多操作`} aria-haspopup="menu" aria-expanded={actionMenu?.id === comp.id} className={`${actionClass} flex items-center gap-0.5`} onClick={event => {
+                              if (actionMenu?.id === comp.id) { setActionMenu(null); return; }
+                              const rect = event.currentTarget.getBoundingClientRect();
+                              const height = 340;
+                              setActionMenu({ id: comp.id, left: Math.max(8, rect.right - 132), top: Math.max(8, Math.min(rect.bottom + 6, window.innerHeight - height - 8)) });
+                            }}>更多<ChevronDown className={cn("w-3 h-3 text-neutral-400 transition-transform", actionMenu?.id === comp.id && "rotate-180")} /></button>
+                          </div>
                         </td>
                       </tr>
-                    ) : (
-                      filteredCompetitions.map((comp) => (
-                        <tr key={comp.id} className="hover:bg-neutral-50/30 transition-colors">
-                          {/* Name and Description preview */}
-                          <td className="px-6 py-4 max-w-[320px]">
-                            <span className="font-black text-neutral-title block truncate" title={comp.name}>{comp.name}</span>
-                            <span className="text-[10.5px] text-neutral-caption block mt-1 truncate" title={comp.description}>{comp.description}</span>
-                          </td>
-                          {/* Type */}
-                          <td className="px-6 py-4 font-bold text-neutral-body">
-                            {comp.type}
-                          </td>
-                          {/* Enrollment */}
-                          <td className="px-6 py-4 font-mono font-bold text-neutral-body">
-                            {comp.teamsCount} 支队伍 / {comp.participants} 人
-                          </td>
-                          {/* Status Badge & direct switcher */}
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              <span className={cn(
-                                "px-2 py-0.5 rounded-[4px] text-[10px] font-black border uppercase tracking-wider font-sans",
-                                comp.status === "进行中" ? "bg-emerald-50 border-emerald-200 text-emerald-600" :
-                                comp.status === "报名中" ? "bg-blue-50 border-blue-200 text-blue-600" :
-                                comp.status === "筹备中" ? "bg-amber-50 border-amber-200 text-amber-600" : "bg-neutral-50 border-neutral-200 text-neutral-500"
-                              )}>
-                                {comp.status}
-                              </span>
-
-                              {/* Simple direct dropdown status manager */}
-                              <select
-                                value={comp.status}
-                                onChange={(e) => handleToggleStatus(comp.id, e.target.value as any)}
-                                className="border border-neutral-200 rounded text-[10px] bg-white px-1 py-0.5 focus:outline-none"
-                              >
-                                <option value="筹备中">筹备中</option>
-                                <option value="报名中">报名中</option>
-                                <option value="进行中">进行中</option>
-                                <option value="已结束">已结束</option>
-                              </select>
-                            </div>
-                          </td>
-                          {/* Duration */}
-                          <td className="px-6 py-4 font-mono text-[10.5px] text-neutral-body font-semibold">
-                            {comp.duration}
-                          </td>
-                          {/* Actions */}
-                          <td className="px-6 py-4 text-center">
-                            <div className="flex items-center justify-center gap-3">
-                              <button 
-                                onClick={() => handleOpenEditDrawer(comp)}
-                                className="text-blue-500 hover:text-blue-700 font-bold flex items-center gap-1 cursor-pointer"
-                                title="编辑竞赛属性"
-                              >
-                                <Edit className="w-3.5 h-3.5" />
-                                <span>编辑</span>
-                              </button>
-                              <button 
-                                onClick={() => handleDeleteCompetition(comp.id, comp.name)}
-                                className="text-red-500 hover:text-red-700 font-bold flex items-center gap-1 cursor-pointer"
-                                title="删除竞赛"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                                <span>删除</span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
+                    ))}
                   </tbody>
                 </table>
               </div>
-              
-              {/* Bottom count footer */}
-              <div className="bg-neutral-50 px-6 py-3 border-t border-neutral-100 flex justify-between items-center text-xs font-semibold text-neutral-body shrink-0 select-none">
-                <span>总共登记: {competitions.length} 个竞赛项目</span>
-                <span className="text-[10px] text-neutral-caption font-medium">提示：状态标记为[进行中]时，评测沙箱将全天候响应参赛者的提报比对。</span>
+              <div className="flex flex-wrap items-center justify-end px-6 py-4 gap-4 border-t border-neutral-border/30">
+                <span className="text-[13px] text-neutral-500">共 {filteredCompetitions.length} 条</span>
+                <div className="flex items-center gap-2">
+                  <Button aria-label="上一页" variant="outline" size="sm" className="h-7 w-7 p-0 rounded-sm bg-white" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}><ChevronLeft className="w-3.5 h-3.5" /></Button>
+                  {Array.from({ length: pageCount }, (_, index) => index + 1).filter(number => number === 1 || number === pageCount || Math.abs(number - currentPage) <= 1).map((number, index, numbers) => <React.Fragment key={number}>
+                    {index > 0 && number - numbers[index - 1] > 1 && <span className="text-neutral-400 text-xs">…</span>}
+                    <Button variant="outline" size="sm" aria-label={`第${number}页`} aria-current={currentPage === number ? "page" : undefined} onClick={() => setPage(number)} className={cn("h-7 w-7 p-0 rounded-sm", currentPage === number ? "bg-[#fa541c] text-white border-[#fa541c] hover:bg-[#e84a15] hover:text-white" : "bg-white")}>{number}</Button>
+                  </React.Fragment>)}
+                  <Button aria-label="下一页" variant="outline" size="sm" className="h-7 w-7 p-0 rounded-sm bg-white" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)}><ChevronRight className="w-3.5 h-3.5" /></Button>
+                </div>
+                <select aria-label="每页条数" value={pageSize} onChange={e => setPageSize(Number(e.target.value))} className="text-[13px] border border-neutral-200 rounded-sm px-2 py-1 focus:outline-none focus:border-[#fa541c] text-neutral-600 bg-white">
+                  {[10, 20, 50].map(size => <option key={size} value={size}>{size} 条/页</option>)}
+                </select>
               </div>
             </div>
 
-            {/* --- Sliding Drawer for Creating/Editing (ZhiYun Premium Form Sheet) --- */}
-            {showDrawer && (
-              <div className="fixed inset-0 z-50 overflow-hidden flex justify-end bg-black/35 backdrop-blur-xs animate-fade-in">
-                
-                {/* Click outside backdrop close handler */}
-                <div className="flex-1" onClick={() => setShowDrawer(false)}></div>
-
-                {/* Main Form container sliding in */}
-                <div className="w-full max-w-[560px] bg-white h-full shadow-2xl flex flex-col justify-between animate-slide-left">
-                  
-                  {/* Drawer Header */}
-                  <div className="p-6 border-b border-neutral-border flex items-center justify-between shrink-0 bg-neutral-50">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="w-5.5 h-5.5 text-[#fa541c]" />
-                      <h2 className="text-base font-black text-neutral-title">
-                        {drawerMode === "create" ? "新建公开竞赛项目" : "编辑竞赛配置信息"}
-                      </h2>
-                    </div>
-                    <button 
-                      onClick={() => setShowDrawer(false)}
-                      className="p-1 rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700 cursor-pointer"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Drawer Body Scroll Container */}
-                  <form onSubmit={handleSaveCompetition} className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar text-xs">
-                    
-                    {/* Section 1: Basic */}
-                    <div className="space-y-4">
-                      <h3 className="font-black text-neutral-title text-sm border-l-3 border-[#fa541c] pl-2">1. 竞赛基本属性</h3>
-                      
-                      {/* Name */}
-                      <div className="space-y-1.5">
-                        <label className="font-bold text-neutral-700 block">
-                          <span className="text-red-500 font-black mr-0.5">*</span> 竞赛项目名称：
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={formName}
-                          onChange={(e) => setFormName(e.target.value)}
-                          placeholder="例如: 2026年智云杯大语言模型应用创新赛"
-                          className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#fa541c] bg-white text-neutral-800 placeholder-neutral-400 font-medium"
-                        />
-                      </div>
-
-                      {/* Dropdown Type & Status */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <label className="font-bold text-neutral-700 block">赛道方向类别：</label>
-                          <select
-                            value={formType}
-                            onChange={(e) => setFormType(e.target.value)}
-                            className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-medium"
-                          >
-                            <option value="大模型开发">大模型开发</option>
-                            <option value="计算机视觉">计算机视觉</option>
-                            <option value="机器学习">机器学习</option>
-                            <option value="自然语言处理">自然语言处理</option>
-                            <option value="安全对抗">安全对抗</option>
-                          </select>
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="font-bold text-neutral-700 block">初始竞赛阶段状态：</label>
-                          <select
-                            value={formStatus}
-                            onChange={(e) => setFormStatus(e.target.value as any)}
-                            className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-medium"
-                          >
-                            <option value="筹备中">筹备中</option>
-                            <option value="报名中">报名中</option>
-                            <option value="进行中">进行中</option>
-                            <option value="已结束">已结束</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Date selection & Duration */}
-                      <div className="space-y-1.5">
-                        <label className="font-bold text-neutral-700 block">竞赛起止日期周期：</label>
-                        <input
-                          type="text"
-                          value={formDuration}
-                          onChange={(e) => setFormDuration(e.target.value)}
-                          placeholder="例如: 2026-06-01 至 2026-08-31"
-                          className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#fa541c] bg-white text-neutral-800 font-mono font-medium"
-                        />
-                      </div>
-
-                      {/* Description */}
-                      <div className="space-y-1.5">
-                        <label className="font-bold text-neutral-700 block">竞赛主旨与详实背景描述：</label>
-                        <textarea
-                          rows={3}
-                          value={formDescription}
-                          onChange={(e) => setFormDescription(e.target.value)}
-                          placeholder="说明本届赛事的考察大纲、核心开发沙箱环境要求、背景及鼓励方向等信息..."
-                          className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#fa541c] bg-white text-neutral-800 placeholder-neutral-400 font-medium resize-none leading-relaxed"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Section 2: Format */}
-                    <div className="space-y-4 pt-4 border-t border-neutral-100">
-                      <h3 className="font-black text-neutral-title text-sm border-l-3 border-[#fa541c] pl-2">2. 赛制与团队配额设定</h3>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <label className="font-bold text-neutral-700 block">组队形式要求：</label>
-                          <input
-                            type="text"
-                            value={formFormat}
-                            onChange={(e) => setFormFormat(e.target.value)}
-                            placeholder="如: 团队赛 (最大5人)"
-                            className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-medium"
-                          />
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="font-bold text-neutral-700 block">单队最大提报测试次数/天：</label>
-                          <input
-                            type="number"
-                            min={1}
-                            max={50}
-                            value={formMaxSubmissions}
-                            onChange={(e) => setFormMaxSubmissions(parseInt(e.target.value) || 5)}
-                            className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-medium font-mono"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Section 3: Rules & Quotas */}
-                    <div className="space-y-4 pt-4 border-t border-neutral-100">
-                      <h3 className="font-black text-neutral-title text-sm border-l-3 border-[#fa541c] pl-2">3. 提报规则与算力隔离分配</h3>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <label className="font-bold text-neutral-700 block">限制算法提交文件类型：</label>
-                          <input
-                            type="text"
-                            value={formFiles}
-                            onChange={(e) => setFormFiles(e.target.value)}
-                            placeholder="如: zip, py, ipynb"
-                            className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-medium font-mono"
-                          />
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="font-bold text-neutral-700 block">单队GPU沙箱配额时长：</label>
-                          <select
-                            value={formGpu}
-                            onChange={(e) => setFormGpu(e.target.value)}
-                            className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-medium"
-                          >
-                            <option value="30 GPU小时">30 GPU小时</option>
-                            <option value="50 GPU小时">50 GPU小时</option>
-                            <option value="100 GPU小时">100 GPU小时</option>
-                            <option value="不限">全面透传 (不限)</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Section 4: Scoring */}
-                    <div className="space-y-4 pt-4 border-t border-neutral-100">
-                      <h3 className="font-black text-neutral-title text-sm border-l-3 border-[#fa541c] pl-2">4. 评分评测算法定义</h3>
-                      
-                      <div className="space-y-1.5">
-                        <label className="font-bold text-neutral-700 block">自动评分数学公式与比对指标：</label>
-                        <input
-                          type="text"
-                          value={formEvalMetric}
-                          onChange={(e) => setFormEvalMetric(e.target.value)}
-                          placeholder="例如: AUC / Accuracy / F1-Score / MSE / IoU"
-                          className="w-full border border-neutral-200 rounded-lg px-3 py-2 text-xs bg-white text-neutral-800 font-bold focus:outline-none focus:border-[#fa541c]"
-                        />
-                      </div>
-                    </div>
-
-                  </form>
-
-                  {/* Drawer Footer Actions */}
-                  <div className="p-6 border-t border-neutral-border bg-neutral-50 flex items-center justify-end gap-3 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setShowDrawer(false)}
-                      className="bg-white hover:bg-neutral-100 text-neutral-title font-bold px-4 py-2 border border-neutral-border rounded-lg cursor-pointer transition-colors shadow-3xs"
-                    >
-                      取消
-                    </button>
-                    <button
-                      type="submit"
-                      onClick={handleSaveCompetition}
-                      className="bg-[#fa541c] hover:bg-[#e84a15] text-white font-bold px-6 py-2 rounded-lg cursor-pointer transition-colors shadow-sm"
-                    >
-                      {drawerMode === "create" ? "发布并公开竞赛" : "保存更新参数"}
-                    </button>
-                  </div>
-
-                </div>
-              </div>
-            )}
+            {showDrawer && <CompetitionFormDrawer
+              initialCompetition={drawerMode === "edit" ? competitions.find(comp => comp.id === editingCompId) || null : null}
+              onClose={() => setShowDrawer(false)}
+              onSave={handleSaveCompetition}
+            />}
 
           </div>
         )}
@@ -1342,10 +1052,10 @@ export default function AdminCompetitionsPage() {
               <div>
                 <h1 className="text-lg font-black text-neutral-title flex items-center gap-2">
                   <TrendingUp className="w-5.5 h-5.5 text-[#fa541c]" />
-                  <span>竞赛成绩与实时排行榜</span>
+                  <span>{scoreMode === "grade" ? "竞赛作品批阅" : "竞赛成绩与排行榜"}</span>
                 </h1>
                 <p className="text-xs text-neutral-caption mt-1">
-                  查看及校准队伍的最高得分。支持手动微调分值并在榜单中实时重整排名。
+                  {scoreMode === "grade" ? "查看参赛作品与评测报告，完成批阅并调整得分。" : "查看参赛队伍的评测得分与排名。"}
                 </p>
               </div>
 
@@ -1377,13 +1087,13 @@ export default function AdminCompetitionsPage() {
                       <th className="px-6 py-4">最终提交文件</th>
                       <th className="px-6 py-4">自动编译代码报告</th>
                       <th className="px-6 py-4">最后提报更新时间</th>
-                      <th className="px-6 py-4 text-center">操作</th>
+                      {scoreMode === "grade" && <th className="px-6 py-4 text-center">操作</th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100 text-xs">
                     {(!leaderboards[selectedCompId] || leaderboards[selectedCompId].length === 0) ? (
                       <tr>
-                        <td colSpan={8} className="px-6 py-12 text-center text-neutral-400">
+                        <td colSpan={scoreMode === "grade" ? 8 : 7} className="px-6 py-12 text-center text-neutral-400">
                           <AlertCircle className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
                           <span>该赛事当前暂无成绩或算法提交排行榜数据。</span>
                         </td>
@@ -1430,14 +1140,14 @@ export default function AdminCompetitionsPage() {
                           {/* Update Time */}
                           <td className="px-6 py-4 font-mono text-[10.5px] text-neutral-caption font-semibold">{rec.time}</td>
                           {/* Score Mod trigger */}
-                          <td className="px-6 py-4 text-center">
+                          {scoreMode === "grade" && <td className="px-6 py-4 text-center">
                             <button
                               onClick={() => handleOpenScoreAdjust(rec)}
                               className="text-xs font-bold text-neutral-title px-2.5 py-1 border border-neutral-200 bg-white hover:bg-neutral-50 rounded-lg cursor-pointer transition-colors shadow-3xs"
                             >
-                              修改得分
+                              批阅评分
                             </button>
-                          </td>
+                          </td>}
                         </tr>
                       ))
                     )}
