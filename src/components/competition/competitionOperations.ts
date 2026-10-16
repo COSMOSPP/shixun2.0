@@ -22,6 +22,33 @@ export interface CompetitionCheck {
   description: string;
   content: string;
   updatedAt: string;
+  scoringType?: "fixed" | "floating";
+  executionTimes?: { id: string; startAfterMinutes: number; frequency: number }[];
+  scoreExpression?: string;
+  dynamicParameterFile?: { name: string; size: number; file: File };
+}
+
+export function configureCompetitionCheck(check: CompetitionCheck): CompetitionCheck {
+  if (check.category === "custom") return { ...check };
+  return {
+    ...check,
+    scoringType: check.scoringType ?? "fixed",
+    executionTimes: check.executionTimes?.map(time => ({ ...time })) ?? [{ id: crypto.randomUUID(), startAfterMinutes: 1, frequency: 1 }],
+    scoreExpression: check.scoreExpression ?? ""
+  };
+}
+
+export function validateCompetitionCheck(check: CompetitionCheck): string {
+  if (![check.name, check.description, check.content].every(value => value.trim())) return "请填写完整的名称、描述和内容";
+  if (check.name.length > 100 || check.description.length > 1000) return "名称最多 100 字，描述最多 1000 字";
+  if (check.category === "custom") return "";
+  if (check.scoringType !== "fixed" && check.scoringType !== "floating") return "请选择判分类型";
+  if (!check.executionTimes?.length) return "请至少添加一条执行时间";
+  if (check.executionTimes.some(time => !Number.isSafeInteger(time.startAfterMinutes) || time.startAfterMinutes < 0 || !Number.isSafeInteger(time.frequency) || time.frequency < 0)) return "开始时间和执行频率或间隔须为非负整数";
+  if (!check.scoreExpression?.trim()) return "请填写得分表达式";
+  const file = check.dynamicParameterFile;
+  if (file && (!/\.(txt|csv)$/i.test(file.name) || file.size > 200 * 1024 * 1024)) return "动态参数文件仅支持 txt/csv 格式，大小须在 200M 以内";
+  return "";
 }
 
 export interface ScoreEvent {

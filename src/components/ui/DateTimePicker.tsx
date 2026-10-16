@@ -10,6 +10,10 @@ export interface DateTimePickerProps {
   disabled?: boolean
   align?: 'left' | 'right'
   showPresets?: boolean
+  id?: string
+  label?: string
+  invalid?: boolean
+  describedBy?: string
 }
 
 export function DateTimePicker({
@@ -20,6 +24,10 @@ export function DateTimePicker({
   disabled = false,
   align = "right",
   showPresets = true,
+  id,
+  label,
+  invalid,
+  describedBy,
 }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   
@@ -239,14 +247,38 @@ export function DateTimePicker({
   const minutes = Array.from({ length: 60 }, (_, i) => i)
 
   return (
-    <div ref={containerRef} className={cn("relative w-full", className)}>
+    <div ref={containerRef} className={cn("relative w-full", className)} onKeyDown={event => {
+      if (isOpen && event.key === 'Escape') {
+        event.preventDefault()
+        event.stopPropagation()
+        setIsOpen(false)
+        containerRef.current?.querySelector<HTMLElement>('[data-datetime-trigger]')?.focus()
+      }
+    }}>
       {/* Input Box Trigger */}
       <div
+        id={id}
+        data-datetime-trigger
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={label}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        aria-disabled={disabled || undefined}
+        aria-invalid={invalid}
+        aria-describedby={describedBy}
+        onKeyDown={event => {
+          if (event.target === event.currentTarget && !disabled && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault()
+            setIsOpen(previous => !previous)
+          }
+        }}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
           "w-full border border-neutral-200 rounded-[4px] px-3 py-2 text-[14px] flex items-center justify-between cursor-pointer bg-white transition-all select-none",
           isOpen ? "border-[#fa541c] ring-1 ring-[#fa541c]" : "hover:border-neutral-300",
-          disabled && "bg-neutral-50 text-neutral-400 cursor-not-allowed border-neutral-100"
+          disabled && "bg-neutral-50 text-neutral-400 cursor-not-allowed border-neutral-100",
+          invalid && "border-red-400"
         )}
       >
         <span className={cn(value ? "text-neutral-800" : "text-neutral-400")}>
@@ -255,6 +287,8 @@ export function DateTimePicker({
         <div className="flex items-center gap-2">
           {value && !disabled && (
             <button
+              type="button"
+              aria-label={label ? `清除${label}` : '清除日期和时间'}
               onClick={(e) => {
                 e.stopPropagation()
                 handleClear()
@@ -274,7 +308,7 @@ export function DateTimePicker({
           "absolute top-[calc(100%+6px)] z-50 bg-white border border-orange-100 rounded-2xl shadow-xl shadow-orange-500/5 backdrop-blur-md p-4 mt-1 flex flex-col animate-in fade-in slide-in-from-top-2 duration-200",
           showPresets ? "w-[500px]" : "w-[410px]",
           align === "left" ? "left-0" : "right-0"
-        )}>
+        )} role="dialog" aria-label={label ? `选择${label}` : '选择日期和时间'}>
           {/* Main Selectors Layout: Calendar | Time Picker | Presets */}
           <div className="flex gap-4 min-h-[240px]">
             {/* 1. Calendar Panel */}
