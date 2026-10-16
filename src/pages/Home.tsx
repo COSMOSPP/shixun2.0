@@ -8,7 +8,6 @@ import {
   Bell, 
   ArrowRight,
   Megaphone,
-  TrendingUp,
   Users,
   PlayCircle,
   Cpu,
@@ -28,6 +27,15 @@ import {
   Brain
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import "@/styles/home.css";
+
+function HomeSectionHeading({ children, description }: { children: React.ReactNode; description: string }) {
+  return <div className="home-section-heading">
+    <h2>{children}</h2>
+    <p className="home-section-description">{description}</p>
+  </div>;
+}
+
 
 const CORE_FEATURES = [
   {
@@ -576,13 +584,6 @@ export default function Home() {
       { title: "计算机视觉 (CV)", intro: "图像处理、目标检测与识别技术", image: "https://picsum.photos/seed/c5/600/400", tags: ["CV", "实战"] }
     ];
   
-    const practices = [
-      { title: "DeepSeek R1 本地私有化部署指南", rating: 4.9, views: "12.5k", image: "https://picsum.photos/seed/p1/600/400" },
-      { title: "基于 Dify 搭建企业级智能知识库", rating: 4.8, views: "8.2k", image: "https://picsum.photos/seed/p2/600/400" },
-      { title: "大模型微调 (LoRA) 性能优化技巧", rating: 4.7, views: "6.4k", image: "https://picsum.photos/seed/p3/600/400" },
-      { title: "AI Agent 智能体开发从入门到精通", rating: 4.9, views: "15.1k", image: "https://picsum.photos/seed/p4/600/400" }
-    ];
-  
     const announcements = [
       { date: "2025-03-18", title: "平台系统架构升级与维护通知", icon: Bell, isNew: true },
       { date: "2025-03-15", title: "AI 能力中心全新上线，支持异构算力调度", icon: Megaphone, isNew: true },
@@ -590,7 +591,7 @@ export default function Home() {
     ];
   
     return (
-      <div className="flex flex-col min-h-full bg-[#f8fafc] font-sans selection:bg-orange-100 selection:text-orange-900">
+      <div className="home-page flex flex-col min-h-full font-sans selection:bg-orange-100 selection:text-orange-900">
         
         {/* Hero Section - Light Luxury Style */}
         <div className="relative w-full aspect-[1024/346] min-h-[300px] md:min-h-[250px] max-h-[580px] overflow-hidden bg-[#fff5eb]">
@@ -647,7 +648,7 @@ export default function Home() {
                     {slide.subtitle}
                   </p>
                   <div className="mt-6 flex items-center gap-3 animate-fade-in-up animation-delay-300">
-                    <Link to="/user/ai/assistant" className="h-12 px-6 sm:h-14 sm:px-8 inline-flex items-center justify-center rounded-full bg-slate-900 text-white text-sm sm:text-base font-medium hover:bg-slate-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                    <Link to="/user/ai/assistant" className="h-12 px-6 sm:h-14 sm:px-8 inline-flex items-center justify-center rounded-full brand-gradient-button text-white text-sm sm:text-base font-medium hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                       开始学习 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                     </Link>
                     <Link to="/login" className="h-12 px-6 sm:h-14 sm:px-8 inline-flex items-center justify-center rounded-full bg-white text-slate-900 text-sm sm:text-base font-medium border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-300">
@@ -710,7 +711,7 @@ export default function Home() {
                      className={cn(
                        "px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 whitespace-nowrap",
                        activeScenario === scenario 
-                         ? "bg-white text-[#fa541c] shadow-sm" 
+                         ? "brand-gradient-button text-white shadow-sm"
                          : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
                      )}
                    >
@@ -720,8 +721,8 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
-              {courses.map((course, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+              {courses.slice(0, 4).map((course, i) => (
                 <Link to="/user/courses" state={{ showDetail: true }} key={i} className="group block bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100">
                   <div className="relative aspect-video overflow-hidden bg-slate-100">
                     <img 
@@ -756,52 +757,6 @@ export default function Home() {
             </div>
           </section>
   
-          {/* Best Practices */}
-          <section id="best-practices" className="scroll-mt-24">
-            <div className="flex items-end justify-between mb-6 md:mb-8 gap-4">
-              <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">最佳实践</h3>
-                <p className="text-slate-500 text-base font-light leading-relaxed">真实业务场景驱动，沉浸式积累一线实战经验</p>
-              </div>
-              <Link to="/user/practices" className="hidden md:flex items-center gap-2 text-[#fa541c] font-medium hover:text-[#e84a15] transition-colors group">
-                查看更多实践 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 md:gap-6">
-              {practices.map((practice, i) => (
-                <Link to="/user/practices" state={{ showDetail: true, practiceId: i + 1 }} key={i} className="group block bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100">
-                  <div className="relative aspect-video overflow-hidden bg-slate-100">
-                    <img 
-                      src={practice.image} 
-                      alt={practice.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center gap-1.5">
-                      <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                      <span className="text-sm font-bold text-slate-900">{practice.rating}</span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h4 className="font-bold text-lg text-slate-900 mb-3 group-hover:text-[#fa541c] transition-colors line-clamp-2 leading-snug min-h-[50px]">
-                      {practice.title}
-                    </h4>
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                      <div className="flex items-center gap-2 text-sm text-slate-500">
-                        <TrendingUp className="w-4 h-4 text-emerald-500" />
-                        <span>{practice.views} 人已学习</span>
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#fff2e8] group-hover:text-[#fa541c] transition-colors">
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-
           {/* ==================== 1. 实训平台功能展示 ==================== */}
           <section id="platform-showcase" className="scroll-mt-24 bg-white rounded-[32px] p-5 sm:p-6 lg:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.02)] border border-slate-100/80">
             <div className="max-w-3xl mb-6 md:mb-8 text-left">
@@ -834,7 +789,7 @@ export default function Home() {
                         className={cn(
                           "w-11 h-11 rounded-xl flex items-center justify-center transition-colors flex-shrink-0",
                           isSelected
-                            ? "bg-[#fa541c] text-white"
+                            ? "brand-gradient-button text-white"
                             : "bg-slate-100 text-slate-500 group-hover:bg-slate-200/80 group-hover:text-slate-700"
                         )}
                       >
@@ -911,16 +866,9 @@ export default function Home() {
           </section>
 
           {/* ==================== 2. 成功案例展示 ==================== */}
-          <section id="success-stories" className="scroll-mt-24">
+          <section id="success-stories" className="home-section scroll-mt-24">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-8 gap-4 text-left">
-              <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
-                  卓越技能，成功案例展示
-                </h3>
-                <p className="text-slate-500 text-base font-light leading-relaxed">
-                  承接多项全国级/省部级大型竞赛与产学研示范工程，为数字化社会建设贡献实训底座。
-                </p>
-              </div>
+              <HomeSectionHeading description="从高校课堂到全国赛场，让技术实力在真实挑战中绽放。">值得信赖的<span>成功案例</span></HomeSectionHeading>
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 border border-slate-200 rounded-full px-4 py-2 bg-white flex-shrink-0 self-start md:self-auto shadow-sm">
                 <Award className="w-4 h-4 text-amber-500" /> 国家权威赛事官方支持商
               </div>
@@ -931,10 +879,10 @@ export default function Home() {
               {SUCCESS_CASES.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_45px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 border border-slate-100 flex flex-col"
+                  className="home-case-card group"
                 >
                   {/* Visual Top section */}
-                  <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
+                  <div className="home-case-image relative overflow-hidden bg-slate-100">
                     <img
                       src={item.image}
                       alt={item.title}
@@ -979,9 +927,9 @@ export default function Home() {
                     {/* CTA Button */}
                     <button
                       onClick={() => setSelectedCase(item)}
-                      className="w-full h-11 inline-flex items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 hover:shadow-lg transition-all duration-300"
+                      className="home-action home-case-action brand-gradient-button"
                     >
-                      查看案例详情 <ArrowRight className="w-4 h-4 ml-2" />
+                      <span>查看案例详情 <ArrowRight className="w-4 h-4" /></span>
                     </button>
                   </div>
                 </div>
@@ -1021,7 +969,7 @@ export default function Home() {
                         className={cn(
                           "w-11 h-11 rounded-xl flex items-center justify-center transition-colors flex-shrink-0",
                           isSelected
-                            ? "bg-[#fa541c] text-white"
+                            ? "brand-gradient-button text-white"
                             : "bg-slate-100 text-slate-500 group-hover:bg-slate-200/80 group-hover:text-slate-700"
                         )}
                       >
@@ -1184,7 +1132,7 @@ export default function Home() {
                 <div className="p-6 border-t border-slate-100 flex justify-end flex-shrink-0">
                   <button
                     onClick={() => setSelectedCase(null)}
-                    className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold tracking-wide transition-colors"
+                    className="h-10 px-6 rounded-xl brand-gradient-button text-white text-xs font-semibold tracking-wide transition-colors"
                   >
                     关闭窗口
                   </button>
@@ -1224,18 +1172,14 @@ export default function Home() {
           {/* Platform Data */}
           <section
             id="platform-data"
-            className="lg:col-span-2 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-[0_12px_36px_-16px_rgba(255,119,36,0.22)] border border-orange-100 relative isolate overflow-hidden flex flex-col justify-center"
-            style={{ background: "radial-gradient(ellipse at 0% 0%, #ffffff 0%, transparent 65%), linear-gradient(115deg, #fff9f2 0%, #ffe9ce 42%, #ffc45c 76%, #ff973d 100%)" }}
+            className="home-platform-data lg:col-span-2 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-[0_12px_36px_-16px_rgba(255,119,36,0.22)] border border-orange-100 relative isolate overflow-hidden flex flex-col justify-center"
           >
-            {/* Bright floating shapes keep the orange palette light and playful. */}
-            <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-              <div className="absolute -top-24 -right-20 size-72 rounded-full bg-gradient-to-br from-[#fff59d] to-[#ffbf48] opacity-80" />
-              <div className="absolute -bottom-32 right-16 h-56 w-96 -rotate-12 rounded-full bg-white/25" />
-              <div className="absolute top-8 right-32 h-3 w-10 -rotate-45 rounded-full bg-white/65" />
-              <div className="absolute top-24 right-10 size-3 rounded-full bg-white/75" />
-              <Sparkles className="absolute top-14 right-16 size-7 text-white/80" strokeWidth={1.5} />
-              <div className="absolute bottom-6 left-8 size-3 rounded-full bg-orange-300/40" />
-            </div>
+            <img
+              aria-hidden="true"
+              alt=""
+              src={`${import.meta.env.BASE_URL}images/home-platform-data-tech-v2.webp`}
+              className="home-platform-data-art"
+            />
 
             <div className="relative z-10">
               <div className="flex items-start justify-between gap-4 mb-6 md:mb-8">

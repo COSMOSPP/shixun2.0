@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface ProjectIDEProps {
+  projectTitle?: string;
   onBack: () => void;
 }
 
-export default function ProjectIDE({ onBack }: ProjectIDEProps) {
+export default function ProjectIDE({ onBack, projectTitle }: ProjectIDEProps) {
   const [activeTab, setActiveTab] = useState('file'); // file, dataset, toc
   const [datasetTab, setDatasetTab] = useState('public');
   const [importedDatasets, setImportedDatasets] = useState<string[]>([]);
@@ -27,7 +28,7 @@ export default function ProjectIDE({ onBack }: ProjectIDEProps) {
           </div>
           <div className="h-4 w-px bg-neutral-border mx-2"></div>
           <div className="flex items-center gap-2 font-bold text-neutral-title">
-            <span>新建深度学习项目</span>
+            <span>{projectTitle || "新建深度学习项目"}</span>
           </div>
         </div>
         

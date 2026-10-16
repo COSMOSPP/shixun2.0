@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ExamResult from "@/components/ExamResult";
+import LearningHistory from "@/components/LearningHistory";
 import { 
   ChevronRight, MonitorPlay, FolderKanban, Database, Plus, Play, Download, Search,
   BookOpen, Clock, Bot, TrendingUp, Calendar as CalendarIcon, Target, Flame, Trash2, ArrowRight, ChevronLeft, Sparkles,
@@ -40,116 +41,7 @@ export default function MyLearning() {
     );
   }
 
-  const renderLearningTab = () => (
-    <div className="space-y-8 animation-fade-in">
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
-            <MonitorPlay className="w-5 h-5 text-[#fa541c]" />
-            最近学习的课程
-          </h2>
-          <button className="text-sm text-neutral-500 hover:text-[#fa541c] flex items-center transition-colors">
-            进入全部课程 <ChevronRight className="w-4 h-4 ml-0.5" />
-          </button>
-        </div>
-        
-        <div className="border border-neutral-200 rounded-2xl shadow-sm hover:border-orange-200 transition-colors bg-white">
-          <div className="p-6 flex flex-col md:flex-row items-center gap-6">
-            <div className="w-48 h-32 bg-orange-50 rounded-xl flex items-center justify-center shrink-0 object-cover overflow-hidden relative group">
-              <MonitorPlay className="w-10 h-10 text-orange-200" />
-              <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer backdrop-blur-[2px]">
-                <Play className="w-10 h-10 text-white opacity-90" />
-              </div>
-            </div>
-            <div className="flex-1 space-y-4 w-full">
-              <div>
-                <h3 className="text-lg font-bold text-neutral-900">Python高级数据处理与可视化</h3>
-                <p className="text-sm text-neutral-500 mt-1">正在学习：第4章 复杂数据清洗与异常处理 - 小节 4.2</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-neutral-500">课程总进度</span>
-                  <span className="text-[#fa541c] font-bold">65%</span>
-                </div>
-                <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#fa541c] rounded-full transition-all" style={{ width: '65%' }} />
-                </div>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button className="bg-[#fa541c] hover:bg-[#e84a15] text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors">
-                  继续学习
-                </button>
-                <button className="bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-600 px-6 py-2 rounded-lg text-sm font-medium transition-colors">
-                  查看课程详情
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <div className="flex items-center justify-between mt-8">
-          <h2 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
-            <FolderKanban className="w-5 h-5 text-indigo-500" />
-            我的工作台
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="border border-neutral-200 rounded-2xl shadow-sm flex flex-col h-[400px] bg-white">
-            <div className="p-4 border-b border-neutral-100 flex items-center justify-between shrink-0">
-              <span className="text-base font-bold text-neutral-900">项目 (2)</span>
-            </div>
-            <div className="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
-              {[1, 2].map((i) => (
-                <div key={i} className="flex gap-4 p-4 border border-neutral-100 rounded-xl hover:border-indigo-200 transition-colors bg-neutral-50/50">
-                  <div className="w-16 h-16 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center justify-center shrink-0">
-                    <FolderKanban className="w-6 h-6 text-indigo-300" />
-                  </div>
-                  <div className="flex-1 min-w-0 flex flex-col justify-between space-y-2">
-                    <div>
-                      <h4 className="font-bold text-neutral-900 truncate text-[14px]">电商用户行为预测</h4>
-                      <p className="text-xs text-neutral-500 line-clamp-1 mt-0.5">使用深度学习模型预测用户购买转化率的实战开发项目。</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="px-2 py-0.5 bg-white border border-neutral-200 text-neutral-500 text-[10px] rounded-md">分类模型</span>
-                      <button className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">开始开发</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="border border-neutral-200 rounded-2xl shadow-sm flex flex-col h-[400px] bg-white">
-            <div className="p-4 border-b border-neutral-100 flex items-center justify-between shrink-0">
-              <span className="text-base font-bold text-neutral-900">数据集 (3)</span>
-            </div>
-            <div className="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex gap-4 p-4 border border-neutral-100 rounded-xl hover:border-blue-200 transition-colors bg-neutral-50/50">
-                  <div className="w-16 h-16 bg-blue-50 rounded-xl border border-blue-100 flex items-center justify-center shrink-0">
-                    <Database className="w-6 h-6 text-blue-300" />
-                  </div>
-                  <div className="flex-1 min-w-0 flex flex-col justify-between space-y-2">
-                    <div>
-                      <h4 className="font-bold text-neutral-900 truncate text-[14px]">淘宝用户行为日志 2025</h4>
-                      <p className="text-xs text-neutral-500 line-clamp-1 mt-0.5">包含数百万用户浏览、加购、购买数据的结构化特征表。</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-neutral-400">更新于昨天</span>
-                      <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">查看详情</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+  const renderLearningTab = () => <LearningHistory />;
 
   const renderDurationTab = () => {
     const weekData = [
@@ -687,7 +579,7 @@ export default function MyLearning() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-auto bg-[#f5f6f8] p-6">
+      <div className="min-w-0 flex-1 overflow-auto bg-[#f5f6f8] p-4 sm:p-6">
         <div className="flex items-center text-sm text-neutral-500 mb-6 shrink-0">
           <Link to="/user" className="hover:text-[#fa541c] transition-colors">首页</Link>
           <ChevronRight className="w-4 h-4 mx-1" />

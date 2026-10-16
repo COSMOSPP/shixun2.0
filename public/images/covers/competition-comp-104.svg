@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="440" viewBox="0 0 520 440" fill="none">
+<defs>
+<linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#FFF0E9"/><stop offset="1" stop-color="#F6D2C7"/></linearGradient>
+<linearGradient id="ridge" x2=".4" y2="1"><stop stop-color="#F6D2C7"/><stop offset=".65" stop-color="#D6968C"/><stop offset="1" stop-color="#F6D2C7"/></linearGradient>
+<radialGradient id="sun"><stop stop-color="#FFFDF5"/><stop offset=".8" stop-color="#FFF6DB"/><stop offset="1" stop-color="#FFF0CC" stop-opacity=".7"/></radialGradient>
+<linearGradient id="fade" x2="0" y2="1"><stop offset=".5" stop-color="#FFFBF5" stop-opacity="0"/><stop offset="1" stop-color="#FFF7EA" stop-opacity=".65"/></linearGradient>
+</defs>
+<path d="M0 0h520v440H0z" fill="url(#sky)"/>
+
+<circle cx="365" cy="97" r="40" fill="url(#sun)"/>
+<path d="M0 303C106 278 236 288 520 251V440H0Z" fill="#F0CBBE"/>
+<path d="M163 295V176C163 79 321 79 321 176V279" stroke="#F5BDA4" stroke-width="63"/>
+<path d="M150 291V172C150 76 308 76 308 172V282" stroke="url(#ridge)" stroke-width="57"/>
+<path d="M130 271V170C130 108 168 76 219 76" stroke="#FFF2DF" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="247" cy="309" rx="125" ry="16" fill="#DDAE9E" opacity=".35"/>
+<path d="M0 348C138 305 286 352 520 301V440H0Z" fill="#F9E0D1"/>
+<path d="M0 349C138 306 286 353 520 302" stroke="#FFF7EB" stroke-width="3"/>
+<path d="M0 390C164 345 320 394 520 348" stroke="#ECC5B4"/>
+
+<path d="M0 0h520v440H0z" fill="url(#fade)"/>
+</svg>

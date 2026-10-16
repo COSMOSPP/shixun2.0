@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="620" viewBox="0 0 1920 620" fill="none">
+<defs>
+  <linearGradient id="sky" x1="960" y1="0" x2="960" y2="620" gradientUnits="userSpaceOnUse"><stop stop-color="#FFE3D0"/><stop offset=".38" stop-color="#FFF7F0"/><stop offset="1" stop-color="#FFDFCD"/></linearGradient>
+  <linearGradient id="silk" x1="0" y1="140" x2="550" y2="515" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD9A9"/><stop offset=".34" stop-color="#FF9B62"/><stop offset=".53" stop-color="#FFF0D9"/><stop offset=".71" stop-color="#FFBD92"/><stop offset="1" stop-color="#FFF8F1"/></linearGradient>
+  <linearGradient id="ribbon" x1="1920" y1="175" x2="1370" y2="510" gradientUnits="userSpaceOnUse"><stop stop-color="#FFAC6C"/><stop offset=".25" stop-color="#FF7242"/><stop offset=".5" stop-color="#FFBD97"/><stop offset=".75" stop-color="#FFE6CE"/><stop offset="1" stop-color="#FFF7EF"/></linearGradient>
+  <linearGradient id="floor" x1="960" y1="330" x2="960" y2="620" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF9F3" stop-opacity="0"/><stop offset=".36" stop-color="#FFF9F3" stop-opacity=".85"/><stop offset="1" stop-color="#FFF1E6"/></linearGradient>
+  <radialGradient id="sun"><stop stop-color="#FFF"/><stop offset="1" stop-color="#FFF" stop-opacity="0"/></radialGradient>
+</defs>
+<path fill="url(#sky)" d="M0 0h1920v620H0z"/>
+<ellipse cx="960" cy="245" rx="630" ry="370" fill="url(#sun)"/>
+<!-- Layered satin dunes lead the eye toward the central horizon. -->
+<path d="M0 156C177 132 210 250 368 280C485 302 527 365 730 384L0 499Z" fill="#FFE5CB"/>
+<path d="M0 193C149 169 198 287 365 305C493 318 508 381 747 405C512 431 357 406 218 369C118 342 49 351 0 376Z" fill="url(#silk)"/>
+<path d="M0 199C149 181 213 297 367 309C500 320 550 390 747 405" stroke="#FFF5E2" stroke-width="3"/>
+<path d="M0 288C162 238 196 375 419 373C560 371 581 400 785 413L0 521Z" fill="#FFD5B9" fill-opacity=".6"/>
+<path d="M1920 133C1773 145 1745 252 1584 288C1460 316 1441 358 1226 390L1920 503Z" fill="#FFD9BD"/>
+<path d="M1920 192C1790 170 1734 285 1570 312C1458 330 1391 386 1190 410C1381 431 1527 391 1673 376C1797 363 1850 392 1920 360Z" fill="url(#ribbon)"/>
+<path d="M1920 198C1788 182 1738 294 1570 317C1452 333 1382 392 1190 410" stroke="#FFEEDA" stroke-width="4"/>
+<path d="M1920 321C1731 278 1713 400 1515 398C1400 397 1350 415 1167 424L1920 558Z" fill="#FFE5D1"/>
+<path d="M0 339h1920v281H0z" fill="url(#floor)"/>
+<!-- Fine reflections and sweeping track lines. -->
+<g stroke="#FFD3B8" stroke-opacity=".55"><path d="M0 500C490 432 1450 432 1920 500"/><path d="M0 552C490 442 1450 442 1920 552"/><path d="M0 610C490 455 1450 455 1920 610"/></g>
+<path d="M0 484C460 424 1390 434 1920 484" stroke="white" stroke-width="3"/>
+</svg>

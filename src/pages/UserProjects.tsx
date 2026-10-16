@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 import ProjectIDE from "@/components/ProjectIDE";
 import ProjectDetail from "@/components/ProjectDetail";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface EnvConfig {
   id: string;
@@ -249,7 +249,9 @@ const getTagStyle = (tagName: string) => {
 
 export default function UserProjects() {
   const location = useLocation();
-  const [isEditingProject, setIsEditingProject] = useState(false);
+  const navigate = useNavigate();
+  const resumeProject = location.state?.resumeProject;
+  const [isEditingProject, setIsEditingProject] = useState(!!resumeProject);
   const [selectedProject, setSelectedProject] = useState<any>(location.state?.project || null);
 
   useEffect(() => {
@@ -536,7 +538,8 @@ export default function UserProjects() {
 
 
   if (isEditingProject) {
-    return <ProjectIDE onBack={() => setIsEditingProject(false)} />;
+    return <ProjectIDE projectTitle={resumeProject?.name}
+      onBack={() => resumeProject ? navigate("/user/mylearning", { state: { historyTab: "projects" } }) : setIsEditingProject(false)} />;
   }
 
   if (selectedProject) {

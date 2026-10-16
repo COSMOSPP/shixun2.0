@@ -10,6 +10,8 @@ interface CourseDetailProps {
   onBack: () => void;
   onShowLearningPath?: () => void;
   initialLesson?: { title: string, type: string } | null;
+  courseTitle?: string;
+  initialProgress?: number;
   isTeacher?: boolean;
 }
 
@@ -224,7 +226,7 @@ const NEW_QUESTIONS = [
   }
 ];
 
-export default function CourseDetail({ onBack, onShowLearningPath, initialLesson, isTeacher }: CourseDetailProps) {
+export default function CourseDetail({ onBack, onShowLearningPath, initialLesson, isTeacher, courseTitle, initialProgress = 3.4 }: CourseDetailProps) {
   const [activeTab, setActiveTab] = useState('intro');
   const [isFavorited, setIsFavorited] = useState(false);
   const [isDatasetFavorited, setIsDatasetFavorited] = useState(false);
@@ -421,7 +423,13 @@ export default function CourseDetail({ onBack, onShowLearningPath, initialLesson
   const isRecommendedMode = (window as any).__RECOMMENDED_MODE === true;
 
   // Dynamic syllabus state & editing states
-  const [syllabus, setSyllabus] = useState<Chapter[]>(COURSE_SYLLABUS);
+  const [syllabus, setSyllabus] = useState<Chapter[]>(courseTitle && initialLesson ? [{
+    chapter: "继续学习",
+    title: courseTitle,
+    duration: 0, videos: 1, docs: 0, experiments: 0, assignments: 0,
+    description: "",
+    lessons: [{ section: "", title: initialLesson.title, type: initialLesson.type, locked: false, status: "学习中" }],
+  }] : COURSE_SYLLABUS);
   const [activeLessonMenu, setActiveLessonMenu] = useState<{ cIdx: number, lIdx: number } | null>(null);
   const [showCreateLessonModal, setShowCreateLessonModal] = useState(false);
   const [showEditLessonModal, setShowEditLessonModal] = useState(false);
@@ -1131,7 +1139,7 @@ export default function CourseDetail({ onBack, onShowLearningPath, initialLesson
               <span className="mx-2">/</span>
               <span className="hover:text-[#fa541c] cursor-pointer">Python 系列课程</span>
               <span className="mx-2">/</span>
-              <span className="text-neutral-title">Python 基础</span>
+              <span className="text-neutral-title">{courseTitle || "Python 基础"}</span>
             </div>
             <div className="flex items-center gap-3">
               <button 
@@ -1166,7 +1174,7 @@ export default function CourseDetail({ onBack, onShowLearningPath, initialLesson
             {/* Right: Info */}
             <div className="flex-1 w-full">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                <h1 className="text-4xl font-bold text-neutral-title">Python 基础</h1>
+                <h1 className="text-4xl font-bold text-neutral-title">{courseTitle || "Python 基础"}</h1>
                 <Button 
                   className="bg-[#fff2e8] text-[#fa541c] hover:bg-[#ffe4d3] border border-[#ffbb96] shadow-sm h-8.5 px-4 text-[13px] flex items-center gap-1.5 shrink-0 rounded-[8px] self-start sm:self-auto"
                   onClick={() => setShowReportModal(true)}
@@ -2000,13 +2008,13 @@ export default function CourseDetail({ onBack, onShowLearningPath, initialLesson
                         <ChevronLeft className="w-4 h-4" /> 返回
                       </div>
                       <div>
-                        <h2 className="text-[16px] font-bold text-neutral-title mb-2">人工智能训练师三级考试</h2>
+                        <h2 className="text-[16px] font-bold text-neutral-title mb-2">{courseTitle || "人工智能训练师三级考试"}</h2>
                         <div className="flex items-center justify-between text-[12px] text-neutral-caption mb-1.5">
                           <span className="truncate pr-2">当前学习：{playingLesson.title}</span>
-                          <span className="shrink-0">3.4%</span>
+                          <span className="shrink-0">{initialProgress}%</span>
                         </div>
                         <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#fa541c] w-[3.4%] rounded-full"></div>
+                          <div className="h-full bg-[#fa541c] rounded-full" style={{ width: `${initialProgress}%` }}></div>
                         </div>
                       </div>
                     </div>

@@ -4,7 +4,7 @@ import {
   Search, ChevronRight, ChevronDown, ChevronLeft, Play, Plus, ArrowLeft, ArrowRight, 
   Terminal, Code, Settings, Rocket, BookOpen, Clock, User, FileCode, CheckCircle2, 
   Bot, Send, Paperclip, LayoutDashboard, Database, Activity, Cpu, PlayCircle, FileText,
-  History, Calendar, Info, Layers, Zap, Star, Sparkles, GitFork, Download, Tag, Heart, X, Copy, Users, Box, MessageSquare, ImageIcon, Edit3, Languages, Code2, LayoutGrid, Mic, LogOut, Ghost, FolderOpen, Sun, GitBranch, Maximize2, ChevronUp, Store
+  History, Calendar, Info, Layers, Zap, Star, Sparkles, GitFork, Download, Tag, Heart, X, Copy, Users, Box, MessageSquare, ImageIcon, Edit3, Languages, Code2, LayoutGrid, Mic, LogOut, Ghost, FolderOpen, Sun, GitBranch, Maximize2, ChevronUp, Store, List
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -126,7 +126,7 @@ export default function UserPractices() {
       if (sortBy === "按热度") return b.usageCount - a.usageCount;
       if (sortBy === "按难度") {
         const diffMap: any = { "初阶": 1, "中阶": 2, "高阶": 3 };
-        return (diffMap[a.difficulty] || 1) - (diffMap[b.difficulty] || 1);
+        return (diffMap[(a as any).difficulty] || 1) - (diffMap[(b as any).difficulty] || 1);
       }
       return 0;
     });

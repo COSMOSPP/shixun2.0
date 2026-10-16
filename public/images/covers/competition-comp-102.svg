@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="440" viewBox="0 0 520 440" fill="none">
+<defs>
+<linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#FFF8F0"/><stop offset="1" stop-color="#FFD7BE"/></linearGradient>
+<linearGradient id="ridge" x2=".4" y2="1"><stop stop-color="#FFD7BE"/><stop offset=".65" stop-color="#EFAC84"/><stop offset="1" stop-color="#FFD7BE"/></linearGradient>
+<radialGradient id="sun"><stop stop-color="#FFFDF5"/><stop offset=".8" stop-color="#FFF6DB"/><stop offset="1" stop-color="#FFF0CC" stop-opacity=".7"/></radialGradient>
+<linearGradient id="fade" x2="0" y2="1"><stop offset=".5" stop-color="#FFFBF5" stop-opacity="0"/><stop offset="1" stop-color="#FFF7EA" stop-opacity=".65"/></linearGradient>
+</defs>
+<path d="M0 0h520v440H0z" fill="url(#sky)"/>
+
+<ellipse cx="142" cy="119" rx="91" ry="54" fill="url(#sun)"/>
+<path d="M-70 172C44 74 151 229 248 158S400 96 588 166" stroke="#FFDFCA" stroke-width="69"/>
+<path d="M-70 180C44 82 151 237 248 166S400 104 588 174" stroke="url(#ridge)" stroke-width="45"/>
+<path d="M-70 158C44 60 151 215 248 144S400 82 588 152" stroke="#FFF9F1" stroke-width="3"/>
+<path d="M-40 276C64 195 168 326 275 249S440 211 560 266" stroke="#FFF6EA" stroke-width="54"/>
+<path d="M-40 290C64 209 168 340 275 263S440 225 560 280" stroke="#F6C9AB" stroke-width="20" opacity=".55"/>
+<path d="M0 351C151 310 300 370 520 325M0 378C170 330 330 395 520 352" stroke="#FFFAF3" stroke-width="2"/>
+
+<path d="M0 0h520v440H0z" fill="url(#fade)"/>
+</svg>

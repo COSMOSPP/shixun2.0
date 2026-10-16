@@ -198,3 +198,14 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   opacity: 0.7;
 }
+/* Shared orange treatment for public-page primary actions. */
+.brand-gradient-button,
+.competition-primary {
+  background: linear-gradient(110deg, #ff923d, #ff5328);
+  box-shadow: 0 7px 18px #ff702c26, inset 0 1px 1px #ffffff80;
+}
+.brand-gradient-button:hover,
+.competition-primary:hover {
+  filter: brightness(1.04);
+  box-shadow: 0 8px 24px #ff702c40;
+}

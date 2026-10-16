@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -36,6 +36,8 @@ import CourseDetail from "@/components/CourseDetail";
 
 export default function UserCourses() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const resumeCourse = location.state?.resumeCourse;
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [showLearningPathModal, setShowLearningPathModal] = useState(false);
   const [showCourseDetail, setShowCourseDetail] = useState(location.state?.showDetail || false);
@@ -185,7 +187,13 @@ export default function UserCourses() {
   return (
     <>
       {showCourseDetail ? (
-        <CourseDetail onBack={() => setShowCourseDetail(false)} onShowLearningPath={() => setShowOnboardingModal(true)} />
+        <CourseDetail
+          onBack={() => resumeCourse ? navigate("/user/mylearning", { state: { historyTab: "courses" } }) : setShowCourseDetail(false)}
+          onShowLearningPath={() => setShowOnboardingModal(true)}
+          courseTitle={resumeCourse?.name}
+          initialProgress={resumeCourse ? Math.round(resumeCourse.completed / resumeCourse.total * 100) : undefined}
+          initialLesson={resumeCourse ? { title: resumeCourse.lastContent, type: "video" } : undefined}
+        />
       ) : (
         <div className="flex flex-col bg-[#f5f6f8] relative">
       {/* Header */}

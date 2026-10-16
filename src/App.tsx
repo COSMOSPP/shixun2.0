@@ -103,6 +103,8 @@ export default function App() {
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<Home />} />
           <Route path="competition" element={<CompetitionList />} />
+          <Route path="competition/:competitionId" element={<CompetitionList />} />
+          <Route path="competition/:competitionId/register" element={<CompetitionList />} />
           <Route path="competition/ai" element={<AICompetition />} />
           <Route path="competition/cloud" element={<CloudCompetition />} />
         </Route>

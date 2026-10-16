@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Bot, Bookmark, Share2, Edit3, CheckCircle2 } from "lucide-react";
 import AIKnowledgeTree from "@/components/AIKnowledgeTree";
 
-const KnowledgeCard = ({ card }: { card: any }) => {
+const KnowledgeCard: React.FC<{ card: any }> = ({ card }) => {
   const [flipped, setFlipped] = useState(false);
   return (
     <div className="relative w-full h-[320px] group perspective-1000" onClick={() => setFlipped(!flipped)}>
