@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, CheckCircle2, ChevronDown, ChevronLeft, ChevronRig
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import CompetitionCheckForm from "./CompetitionCheckForm";
+import CompetitionCandidateGrading from "./CompetitionCandidateGrading";
 import { competitionDrawerStyles as styles } from "./competitionDrawerStyles";
 import { CheckCategory, CompetitionCandidate, CompetitionCheck, CompetitionOperationData, CompetitionOperationMode, OperationCompetition, competitionScore, configureCompetitionCheck, validateCompetitionCheck } from "./competitionOperations";
 
@@ -78,8 +79,6 @@ export default function CompetitionOperationsDrawer({ target, data, onChange, on
   const [checkEditor, setCheckEditor] = useState<CompetitionCheck | null>(null);
   const [checkDetail, setCheckDetail] = useState<CompetitionCheck | null>(null);
   const [candidatePanel, setCandidatePanel] = useState<{ id: string; kind: "grade" | "events" | "result" } | null>(null);
-  const [rawScores, setRawScores] = useState(["", ""]);
-  const [comment, setComment] = useState("");
   const [extensionTargets, setExtensionTargets] = useState<string[] | null>(null);
   const [extensionMinutes, setExtensionMinutes] = useState("30");
   const [confirmation, setConfirmation] = useState<{ title: string; message: string; run: () => void } | null>(null);
@@ -141,12 +140,11 @@ export default function CompetitionOperationsDrawer({ target, data, onChange, on
   const checks = filteredChecks.slice((checkPage - 1) * size, checkPage * size);
   const categoryLabel = categories.find(item => item.key === category)!.label;
   const isSubpage = !!(checkEditor || checkDetail || candidatePanel || extensionTargets);
-  const subformId = candidatePanel?.kind === "grade" ? "competition-grade-form" : checkEditor ? "competition-check-form" : extensionTargets ? "competition-extension-form" : null;
+  const subformId = checkEditor ? "competition-check-form" : extensionTargets ? "competition-extension-form" : null;
   const backToList = () => { setCheckEditor(null); setCheckDetail(null); setCandidatePanel(null); setExtensionTargets(null); setError(""); };
   const updateCandidates = (ids: string[], patch: Partial<CompetitionCandidate>) => onChange({ ...data, candidates: data.candidates.map(row => ids.includes(row.id) ? { ...row, ...patch } : row) });
   const openCandidate = (candidate: CompetitionCandidate, kind: "grade" | "events" | "result") => {
     setRowMenu(null); setCandidatePanel({ id: candidate.id, kind }); setError("");
-    setRawScores([candidate.fixed === null ? "" : String(candidate.fixed), candidate.floating === null ? "" : String(candidate.floating)]); setComment("");
   };
   const initializeEnvironment = (ids: string[]) => {
     setConfirmation({ title: "初始化环境", message: `将为 ${ids.length} 位考生初始化竞赛环境，是否继续？`, run: () => {
@@ -159,14 +157,6 @@ export default function CompetitionOperationsDrawer({ target, data, onChange, on
   const beginExtend = (ids: string[]) => { setRowMenu(null); setExtensionMinutes("30"); setExtensionTargets(ids); setError(""); };
   const handleExport = () => { exportCandidates(competition, data, filteredCandidates); onNotify("考生数据已导出"); };
   const setPageSize = (value: number) => { setSize(value); setPage(1); };
-  const saveGrade = (event: React.FormEvent) => {
-    event.preventDefault(); if (!activeCandidate) return;
-    const [fixed, floating] = rawScores.map(Number);
-    if (rawScores.some(value => !value.trim()) || [fixed, floating].some(value => !Number.isFinite(value) || value < 0 || value > 100)) { setError("请输入 0 至 100 之间的原始得分"); return; }
-    const total = competitionScore({ fixed, floating }, data).total;
-    onChange({ ...data, candidates: data.candidates.map(row => row.id === activeCandidate.id ? { ...row, fixed, floating, events: [...row.events, { id: `score-${Date.now()}`, time: now(), fixed, floating, total, comment: comment.trim() || "人工批阅评分" }] } : row) });
-    backToList(); onNotify("批阅评分已保存");
-  };
   const saveCheck = (event: React.FormEvent) => {
     event.preventDefault(); if (!checkEditor) return;
     const validationError = validateCompetitionCheck(checkEditor);
@@ -199,24 +189,17 @@ export default function CompetitionOperationsDrawer({ target, data, onChange, on
   return createPortal(<div className={styles.overlay} onClick={onClose}>
     <div ref={drawerRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={titles[mode]} className={cn(styles.panel, mode === "scoring" ? "max-w-[680px]" : "max-w-[1100px]")} onClick={e => e.stopPropagation()}>
       <header className={styles.header}>
-        <h2 className={styles.title}>{titles[mode]}</h2>
+        <h2 className={styles.title}>{candidatePanel?.kind === "grade" ? "批阅考生" : titles[mode]}</h2>
         <div className="flex items-center gap-3">{mode === "proctor" && <Button variant="outline" onClick={() => { setRefreshAt(new Date().toLocaleTimeString("zh-CN", { hour12: false })); onNotify("监考信息已刷新"); }} className={`${secondaryClass} gap-1.5`}><RefreshCw className="w-3.5 h-3.5" />刷新</Button>}<button aria-label="关闭竞赛抽屉" onClick={onClose} className={styles.close}><X className="w-4 h-4" /></button></div>
       </header>
       <div className={styles.body}>
         <p className="text-xs text-neutral-500 truncate" title={competition.name}>{competition.name}</p>
         {isSubpage && <button className="flex items-center gap-1.5 text-neutral-500 hover:text-[#fa541c] text-xs cursor-pointer" onClick={backToList}><ArrowLeft className="w-3.5 h-3.5" />返回{titles[mode]}列表</button>}
 
-        {candidatePanel && activeCandidate ? <div className="space-y-5">
-          <div className="border border-neutral-200 rounded-[4px] overflow-hidden"><div className="bg-neutral-50 px-4 py-3 border-b border-neutral-200 font-semibold">{candidatePanel.kind === "grade" ? "批阅" : candidatePanel.kind === "events" ? "得分事件" : "竞赛结果"} · {activeCandidate.name}</div>
+        {candidatePanel && activeCandidate ? candidatePanel.kind === "grade" ? <CompetitionCandidateGrading candidate={activeCandidate} data={data} onNotify={onNotify} /> : <div className="space-y-5">
+          <div className="border border-neutral-200 rounded-[4px] overflow-hidden"><div className="bg-neutral-50 px-4 py-3 border-b border-neutral-200 font-semibold">{candidatePanel.kind === "events" ? "得分事件" : "竞赛结果"} · {activeCandidate.name}</div>
             <div className="p-4 grid grid-cols-2 gap-3 text-xs text-neutral-600"><div>账号：{activeCandidate.account}</div><div>姓名：{activeCandidate.name}</div><div>状态：{activeCandidate.status}</div><div>当前得分：<span className="text-[#fa541c] font-semibold">{competitionScore(activeCandidate, data).total} / {competitionScore(activeCandidate, data).maximum}</span></div></div>
           </div>
-          {candidatePanel.kind === "grade" && <form id="competition-grade-form" onSubmit={saveGrade} className="space-y-5 max-w-[680px]">
-            <p className="text-xs text-neutral-400">录入原始得分后，按本场竞赛设置的固定、浮动总分换算。</p>
-            {["固定原始得分", "浮动原始得分"].map((label, index) => <label key={label} className={styles.field}><span className={styles.label}>{label} <span className="text-neutral-400 text-xs font-normal">（满分 100）</span></span><input className={inputClass} required type="number" min="0" max="100" step="0.01" value={rawScores[index]} onChange={e => setRawScores(prev => prev.map((value, i) => i === index ? e.target.value : value))} /></label>)}
-            <label className={cn(styles.field, "items-start [&>span]:pt-2")}><span className={styles.label}>批阅备注</span><textarea className={inputClass} rows={3} value={comment} onChange={e => setComment(e.target.value)} placeholder="请输入批阅说明（选填）" /></label>
-            <p className="text-sm text-neutral-600">换算得分：<span className="text-[#fa541c] font-semibold">{competitionScore({ fixed: Number(rawScores[0]) || 0, floating: Number(rawScores[1]) || 0 }, data).total} / {competitionScore(activeCandidate, data).maximum}</span></p>
-            {error && <p role="alert" className="text-red-500 text-xs">{error}</p>}
-          </form>}
           {candidatePanel.kind === "events" && <div className={tableWrapper}><table className="w-full text-left whitespace-nowrap"><thead><tr className={tableHeader}>{["事件时间", "固定原始得分", "浮动原始得分", "当次总得分", "批阅说明"].map(label => <th key={label} className="p-3 font-medium">{label}</th>)}</tr></thead><tbody>{activeCandidate.events.length ? [...activeCandidate.events].reverse().map(event => <tr key={event.id} className={rowClass}><td className={cellClass}>{event.time}</td><td className={cellClass}>{event.fixed}</td><td className={cellClass}>{event.floating}</td><td className={cellClass}>{event.total}</td><td className={`${cellClass} whitespace-normal min-w-40`}>{event.comment}</td></tr>) : <EmptyRow columns={5} label="暂无得分事件" />}</tbody></table></div>}
           {candidatePanel.kind === "result" && <div className="space-y-4"><div className="grid grid-cols-3 gap-4">{[["固定得分", competitionScore(activeCandidate, data).fixed ?? "--"], ["浮动得分", competitionScore(activeCandidate, data).floating ?? "--"], ["总得分", competitionScore(activeCandidate, data).total]].map(([label, score]) => <div key={label} className="border border-neutral-200 rounded-[4px] p-4"><p className="text-xs text-neutral-500 mb-2">{label}</p><p className="font-semibold text-xl">{score}</p></div>)}</div><div className="border border-neutral-200 rounded-[4px] p-4 space-y-3 text-neutral-600"><p>提交文件：{activeCandidate.file || "暂无提交文件"}</p><p>评测报告：{activeCandidate.report || "暂无评测报告"}</p></div><button className={actionClass} onClick={() => setCandidatePanel({ id: activeCandidate.id, kind: "events" })}>查看得分事件</button></div>}
         </div> : checkEditor ? <CompetitionCheckForm value={checkEditor} isEditing={data.checks.some(item => item.id === checkEditor.id)} error={error} onChange={value => { setCheckEditor(value); setError(""); }} onSubmit={saveCheck} /> : checkDetail ? <div className="border border-neutral-200 rounded-[4px] overflow-hidden"><h3 className="px-4 py-3 bg-neutral-50 border-b border-neutral-200 font-semibold">{checkDetail.name}</h3><div className="p-4 space-y-4"><p className="text-neutral-500">{checkDetail.description}</p><pre className="whitespace-pre-wrap break-words rounded bg-neutral-50 border border-neutral-100 p-4 text-xs leading-6 text-neutral-700 font-mono">{checkDetail.content}</pre><p className="text-xs text-neutral-400">更新时间：{checkDetail.updatedAt}</p></div></div>
@@ -256,7 +239,7 @@ export default function CompetitionOperationsDrawer({ target, data, onChange, on
       </div>
       <footer className={styles.footer}>
         <Button type="button" variant="outline" onClick={subformId ? backToList : onClose} className={secondaryClass}>{subformId || mode === "scoring" ? "取消" : "关闭"}</Button>
-        {subformId ? <Button type="submit" form={subformId} className={primaryClass}>{candidatePanel?.kind === "grade" ? "保存批阅" : checkEditor ? "保存检查项" : "确认延时"}</Button> : mode === "scoring" && <Button type="submit" form="competition-score-totals" className={primaryClass}>确认</Button>}
+        {subformId ? <Button type="submit" form={subformId} className={primaryClass}>{checkEditor ? "保存检查项" : "确认延时"}</Button> : mode === "scoring" && <Button type="submit" form="competition-score-totals" className={primaryClass}>确认</Button>}
       </footer>
       {rowMenu && activeMenuCandidate && createPortal(<div ref={menuRef} role="menu" aria-label="考生更多操作" className="fixed w-[132px] bg-white border border-neutral-200 rounded-[4px] shadow-lg z-[220] py-1" style={{ left: rowMenu.left, top: rowMenu.top }}>{[
         { label: "初始化环境", run: () => initializeEnvironment([activeMenuCandidate.id]) }, { label: "清理环境", run: () => cleanEnvironment([activeMenuCandidate.id]) }, { label: "得分事件", run: () => openCandidate(activeMenuCandidate, "events") }

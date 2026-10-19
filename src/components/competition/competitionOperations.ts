@@ -75,6 +75,7 @@ export interface CompetitionCandidate {
   events: ScoreEvent[];
   file: string;
   report: string;
+  checkResults?: { checkId: string; score: number | null; result: string; executedAt?: string }[];
 }
 
 export interface CompetitionOperationData {

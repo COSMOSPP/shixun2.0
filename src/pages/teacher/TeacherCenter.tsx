@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, Bell, Database, Key, Shield, AlertCircle, CheckCircle, ChevronRight, ChevronLeft, ArrowLeft, Clock, Plus, Trash2, Edit, Activity, Copy, Eye, EyeOff, Laptop, Smartphone, FileText, Check, Settings, Globe, Mail, Phone, Building2, Hash, Calendar, X, Lock, Award, BookOpen, GraduationCap, Sparkles, Users, Share2, Camera, FolderKanban, Star, CheckCircle2, Briefcase, Search, ExternalLink, Tag, Inbox, AlertTriangle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { User, Bell, Database, Key, Shield, AlertCircle, CheckCircle, ChevronRight, ChevronLeft, ArrowLeft, Clock, Plus, Trash2, Edit, Activity, Copy, Eye, EyeOff, Laptop, Smartphone, FileText, Check, Settings, Globe, Mail, Phone, Building2, Hash, Calendar, X, Lock, Award, BookOpen, GraduationCap, Sparkles, Users, Share2, Camera, FolderKanban, Star, CheckCircle2, Briefcase, ExternalLink, Tag, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import MessageCenterList, { initialMessageListState } from '@/components/MessageCenterList';
 import { Button } from '@/components/ui/button';
 
 // --- Mock Data ---
@@ -177,17 +178,9 @@ export default function TeacherCenter() {
 
   // --- Notification State ---
   const [notifications, setNotifications] = useState<NotificationItem[]>(mockNotifications);
-  const [notiFilter, setNotiFilter] = useState<'全部' | '未读' | '已读'>('全部');
-  const [notiSearchQuery, setNotiSearchQuery] = useState('');
+  const [messageListState, setMessageListState] = useState(initialMessageListState);
   const [selectedNotiId, setSelectedNotiId] = useState<number | null>(null);
   const [isAllReadClicked, setIsAllReadClicked] = useState(false);
-
-  const filteredNotis = notifications.filter(n => {
-    if (notiFilter === '未读' && n.read) return false;
-    if (notiFilter === '已读' && !n.read) return false;
-    if (notiSearchQuery && !n.title.toLowerCase().includes(notiSearchQuery.toLowerCase()) && !n.content.toLowerCase().includes(notiSearchQuery.toLowerCase()) && !n.sender.toLowerCase().includes(notiSearchQuery.toLowerCase())) return false;
-    return true;
-  });
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -702,7 +695,7 @@ export default function TeacherCenter() {
     if (selectedNotiId !== null && selectedNoti) {
       return (
         <div className="animate-fade-in space-y-5 text-left w-full pb-10">
-          {/* Top Bar Navigation & Breadcrumbs */}
+          {/* Return to the notification list */}
           <div className="flex items-center justify-between gap-4 bg-white p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
             <div className="flex items-center gap-3">
               <Button 
@@ -712,14 +705,6 @@ export default function TeacherCenter() {
               >
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" /> 返回消息列表
               </Button>
-              <span className="text-neutral-300">|</span>
-              <div className="text-xs text-neutral-500 flex items-center gap-1.5 font-medium">
-                <span>个人中心</span>
-                <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
-                <span>消息通知</span>
-                <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
-                <span className="text-neutral-900 font-bold max-w-[200px] truncate">{selectedNoti.title}</span>
-              </div>
             </div>
           </div>
 
@@ -750,173 +735,14 @@ export default function TeacherCenter() {
       );
     }
 
-    // LIST VIEW
     return (
-      <div className="animate-fade-in space-y-4 text-left w-full">
-        {/* Header Section matching AdminAudit */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-neutral-900">消息通知</h2>
-            <p className="text-xs text-neutral-500 mb-0.5">
-              查看与管理系统通知、考试提醒、课程审核与团队协作消息
-            </p>
-          </div>
-
-          {/* Action Button */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleMarkAllAsRead}
-              className={cn(
-                "px-3.5 py-1.5 text-xs font-medium bg-white border rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs",
-                isAllReadClicked
-                  ? "text-[#fa541c] border-orange-200 bg-orange-50/30"
-                  : "text-neutral-700 border-neutral-200 hover:border-[#fa541c] hover:text-[#fa541c] hover:bg-orange-50/40"
-              )}
-            >
-              <CheckCircle2 className={cn("w-3.5 h-3.5 transition-colors", isAllReadClicked ? "text-[#fa541c]" : "text-neutral-400")} />
-              全部已读
-            </button>
-          </div>
-        </div>
-
-        {/* Table and Toolbar Unified Module */}
-        <div className="bg-white rounded border border-neutral-200 overflow-hidden flex-1 flex flex-col shadow-2xs">
-          {/* Integrated Toolbar Header Section */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-3.5 border-b border-neutral-100 bg-white shrink-0">
-            {/* Search Input bar */}
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="relative w-full md:w-72">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-                <input 
-                  type="text"
-                  placeholder="搜索消息名称..."
-                  value={notiSearchQuery}
-                  onChange={(e) => setNotiSearchQuery(e.target.value)}
-                  className="pl-9 pr-4 py-1.5 w-full bg-white border border-neutral-200 rounded-full text-xs focus:outline-none focus:border-[#fa541c] focus:ring-1 focus:ring-[#fa541c] text-neutral-800 transition-all placeholder:text-neutral-400 h-9"
-                />
-              </div>
-            </div>
-
-            {/* Right: Status Pill Selectors matching AdminAudit style */}
-            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-              <div className="flex bg-neutral-100 rounded-full p-1 border border-neutral-200/50">
-                {(["全部", "未读", "已读"] as const).map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setNotiFilter(f)}
-                    className={cn(
-                      "px-4 py-1.5 text-[12px] font-medium rounded-full transition-all duration-200 cursor-pointer border-0 bg-transparent flex items-center gap-1",
-                      notiFilter === f 
-                        ? "bg-white text-[#fa541c] font-bold shadow-sm" 
-                        : "text-neutral-600 hover:text-neutral-900"
-                    )}
-                  >
-                    {f}
-                    {f === '未读' && unreadCount > 0 && (
-                      <span className="ml-1 px-1.5 py-0.2 bg-[#fa541c] text-white rounded-full text-[10px] font-bold">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Main Table Content */}
-          <div className="overflow-x-auto flex-1">
-            <table className="w-full text-left border-collapse whitespace-nowrap text-[13px]">
-              <thead>
-                <tr className="border-b border-neutral-100 bg-neutral-50/50 text-[13px] text-neutral-600 font-medium">
-                  <th className="p-4 font-medium w-[60%]">消息名称</th>
-                  <th className="p-4 font-medium w-[15%]">消息分类</th>
-                  <th className="p-4 font-medium w-[15%]">消息时间</th>
-                  <th className="p-4 font-medium w-[10%] text-left">操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredNotis.length > 0 ? (
-                  filteredNotis.map((noti, index) => (
-                    <tr 
-                      key={noti.id} 
-                      onClick={() => handleSelectNotification(noti.id)}
-                      className={cn(
-                        "border-b border-neutral-100 hover:bg-orange-50/30 transition-colors group text-[13px] cursor-pointer", 
-                        index === filteredNotis.length - 1 && "border-b-0", 
-                        !noti.read && "bg-orange-50/10 font-medium"
-                      )}
-                    >
-                      {/* 消息名称 */}
-                      <td className="p-4 whitespace-normal">
-                        <div className="flex items-center gap-2.5">
-                          {!noti.read ? (
-                            <span className="w-2 h-2 rounded-full bg-[#fa541c] shrink-0" title="未读消息"></span>
-                          ) : (
-                            <span className="w-2 h-2 rounded-full bg-transparent shrink-0"></span>
-                          )}
-                          <span className={cn(
-                            "transition-colors group-hover:text-[#fa541c]", 
-                            !noti.read ? "text-neutral-900 font-bold" : "text-neutral-800 font-medium"
-                          )}>
-                            {noti.title}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* 消息分类 */}
-                      <td className="p-4 text-neutral-700 font-normal text-[13px]">
-                        <span className="px-2 py-0.5 bg-neutral-100 text-neutral-700 rounded text-xs">
-                          {noti.type}
-                        </span>
-                      </td>
-
-                      {/* 消息时间 */}
-                      <td className="p-4 text-neutral-500 font-mono text-[12px]">
-                        {noti.time}
-                      </td>
-
-                      {/* 操作 */}
-                      <td className="p-4 text-left">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectNotification(noti.id);
-                          }}
-                          className="text-xs text-[#fa541c] hover:underline font-medium inline-flex items-center cursor-pointer bg-transparent border-0"
-                        >
-                          查看详情
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="py-16 text-center text-neutral-400 text-xs">
-                      <Inbox className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
-                      暂无相关通知记录
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <MessageCenterList notifications={notifications} state={messageListState}
+        onStateChange={setMessageListState} onOpen={handleSelectNotification} />
     );
   };
 
   const renderQuota = () => (
     <div className="animate-fade-in space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-neutral-900">我的资源配额</h2>
-          <p className="text-[13px] text-neutral-500 mt-1">查看和管理平台为您分配的教学资源额度</p>
-        </div>
-        <Button onClick={() => setIsQuotaModalOpen(true)} className="bg-[#fa541c] hover:bg-[#e84a15] text-white rounded-full px-6 shadow-sm font-bold">
-          <Plus className="w-4 h-4 mr-1.5" /> 申请临时额度
-        </Button>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {[
           { label: 'GPU卡时', total: 1000, used: 850, unit: '小时', color: 'bg-indigo-500' },
@@ -1038,16 +864,6 @@ export default function TeacherCenter() {
 
   const renderApi = () => (
     <div className="animate-fade-in space-y-6">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-xl font-bold text-neutral-900">API Key 配置</h2>
-          <p className="text-[13px] text-neutral-500 mt-1">管理您的个人访问密钥，用于对接大模型能力及平台开放接口</p>
-        </div>
-        <Button onClick={() => setIsKeyModalOpen(true)} className="bg-[#fa541c] hover:bg-[#e84a15] text-white rounded-full px-6 shadow-sm font-bold">
-          <Plus className="w-4 h-4 mr-1.5" /> 创建 API Key
-        </Button>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
@@ -1148,10 +964,6 @@ export default function TeacherCenter() {
   const renderSecurity = () => (
     <div className="animate-fade-in space-y-8">
       <div className="bg-white p-8 rounded-2xl border border-neutral-200 shadow-sm space-y-6">
-        <h3 className="text-[16px] font-bold text-neutral-900 mb-2 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-[#fa541c]" /> 安全设置
-        </h3>
-        
         <div className="divide-y divide-neutral-100">
           <div className="py-5 flex items-center justify-between">
             <div className="flex gap-4 items-center">
@@ -1310,6 +1122,9 @@ export default function TeacherCenter() {
     </div>
   );
 
+  const activeMenuItem = menuItems.find(item => item.id === activeTab)!;
+  const selectedNotification = activeTab === 'notifications' ? notifications.find(item => item.id === selectedNotiId) : undefined;
+
   return (
     <div className="flex h-full w-full bg-white overflow-hidden shadow-sm">
       
@@ -1336,7 +1151,11 @@ export default function TeacherCenter() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id as any)}
+                onClick={() => {
+                  setActiveTab(item.id as typeof activeTab);
+                  setSelectedNotiId(null);
+                }}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-[14px] font-medium transition-colors",
                   isActive 
@@ -1353,7 +1172,40 @@ export default function TeacherCenter() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-auto bg-[#f5f6f8] p-6">
+      <div className="min-w-0 flex-1 overflow-auto bg-[#f5f6f8] p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <nav aria-label="面包屑" className="flex min-w-0 items-center text-sm text-neutral-caption">
+            <Link to="/teacher" className="shrink-0 cursor-pointer transition-colors hover:text-primary">首页</Link>
+            <ChevronRight aria-hidden="true" className="mx-1 size-4 shrink-0" />
+            <button type="button" onClick={() => { setActiveTab('profile'); setSelectedNotiId(null); }} className="shrink-0 cursor-pointer transition-colors hover:text-primary">个人中心</button>
+            <ChevronRight aria-hidden="true" className="mx-1 size-4 shrink-0" />
+            {selectedNotification ? (
+              <>
+                <button type="button" onClick={() => setSelectedNotiId(null)} className="shrink-0 cursor-pointer transition-colors hover:text-primary">{activeMenuItem.label}</button>
+                <ChevronRight aria-hidden="true" className="mx-1 size-4 shrink-0" />
+                <span aria-current="page" className="max-w-[280px] truncate font-medium text-neutral-title">{selectedNotification.title}</span>
+              </>
+            ) : <span aria-current="page" className="font-medium text-neutral-title">{activeMenuItem.label}</span>}
+          </nav>
+          {activeTab === 'notifications' && !selectedNotification && (
+            <button type="button" onClick={handleMarkAllAsRead} className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border bg-white px-3.5 py-1.5 text-xs font-medium shadow-2xs transition-all",
+              isAllReadClicked ? "border-orange-200 bg-orange-50/30 text-[#fa541c]" : "border-neutral-200 text-neutral-700 hover:border-[#fa541c] hover:bg-orange-50/40 hover:text-[#fa541c]"
+            )}>
+              <CheckCircle2 className={cn("size-3.5", isAllReadClicked ? "text-[#fa541c]" : "text-neutral-400")} />全部已读
+            </button>
+          )}
+          {activeTab === 'quota' && (
+            <Button onClick={() => setIsQuotaModalOpen(true)} className="shrink-0 rounded-full bg-[#fa541c] px-6 font-bold text-white shadow-sm hover:bg-[#e84a15]">
+              <Plus className="mr-1.5 size-4" />申请临时额度
+            </Button>
+          )}
+          {activeTab === 'api' && (
+            <Button onClick={() => setIsKeyModalOpen(true)} className="shrink-0 rounded-full bg-[#fa541c] px-6 font-bold text-white shadow-sm hover:bg-[#e84a15]">
+              <Plus className="mr-1.5 size-4" />创建 API Key
+            </Button>
+          )}
+        </div>
         {activeTab === 'profile' && renderProfile()}
         {activeTab === 'notifications' && renderNotifications()}
         {activeTab === 'quota' && renderQuota()}
